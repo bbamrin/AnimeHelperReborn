@@ -4,6 +4,7 @@ public class StaticVars {
     public static String FRAGMENT_BACKSTACK = "backStack";
     public static int SUCCES_CODE = 1;
     public static int FAIL_CODE = -1;
+    public static boolean UNBLOCK_FOOTER = false;
     public static int FOOTER_CODE = 0;
     public static int ITEM_CODE = 1;
     public static String ANIME_LIST = "animeList";

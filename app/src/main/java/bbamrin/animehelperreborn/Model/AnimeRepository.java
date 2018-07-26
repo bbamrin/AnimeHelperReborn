@@ -4,6 +4,8 @@ import android.app.Application;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 import bbamrin.animehelperreborn.BasePresenter;
@@ -25,7 +27,9 @@ public class AnimeRepository extends AnimeRepositoryModel {
     private static AnimeRepository singleton;
     private Retrofit retrofit;
     private ShikimoriAPI API;
+    private Map<ArrayList<Genre>,Integer> mLastPagesMap;
     private Disposable disposable;
+    private Map<ArrayList<Genre>,ArrayList<AnimeModel>> mAnimeMap;
     private ArrayList<AnimeModel> animeModelsList;
     private Observable<ArrayList<AnimeModel>> receivedAnimes;
 
@@ -50,6 +54,8 @@ public class AnimeRepository extends AnimeRepositoryModel {
     @Override
     public void onCreate() {
         super.onCreate();
+        mAnimeMap = new HashMap<>();
+        mLastPagesMap = new HashMap<>();
         retrofit = new Retrofit
                 .Builder()
                 .baseUrl(StaticVars.BASE_SHIKIMORI_URL)
@@ -63,8 +69,11 @@ public class AnimeRepository extends AnimeRepositoryModel {
 
 
     @Override
-    public void downloadNewAnimes(ArrayList<Genre> genres, String page, String limit) {
+    public void downloadNewAnimes(final ArrayList<Genre> genres, final String page, String limit) {
         animeModelsList = new ArrayList<>();
+        if (!mAnimeMap.containsKey(genres)){
+            mAnimeMap.put(genres,new ArrayList<AnimeModel>());
+        }
 
         Log.d(StaticVars.LOG_TAG, "getAnimeList");
         Log.d(StaticVars.LOG_TAG, Utils.generateGenresQueryForShikimori(genres));
@@ -76,9 +85,10 @@ public class AnimeRepository extends AnimeRepositoryModel {
                     @Override
                     public void onNext(ArrayList<AnimeModel> animeModels) {
                         Log.d(StaticVars.LOG_TAG,"network request ended");
-                        animeModelsList = Utils.addOnlyNewData(animeModelsList,animeModels);
+                        mAnimeMap.put(genres,Utils.addOnlyNewData(mAnimeMap.get(genres),animeModels));
+                        mLastPagesMap.put(genres,Integer.parseInt(page));
                         if (mResultPresenter != null) {
-                            mResultPresenter.notifyAnimesReceived(animeModels);
+                            mResultPresenter.notifyAnimesReceived(mAnimeMap.get(genres));
                         }
                     }
                     @Override
@@ -94,8 +104,8 @@ public class AnimeRepository extends AnimeRepositoryModel {
     }
 
     @Override
-    public ArrayList<AnimeModel> getAnimeList() {
-        return animeModelsList;
+    public ArrayList<AnimeModel> getAnimeList(ArrayList<Genre> genres) {
+        return mAnimeMap.get(genres);
     }
 
 
@@ -112,6 +122,10 @@ public class AnimeRepository extends AnimeRepositoryModel {
         }
     }
 
+    @Override
+    public int getLastPage(ArrayList<Genre> genres) {
+        return mLastPagesMap.get(genres);
+    }
 
 
     @Override

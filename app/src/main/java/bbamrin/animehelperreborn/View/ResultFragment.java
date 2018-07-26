@@ -14,10 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 
 import bbamrin.animehelperreborn.Contracts.ResultContract;
@@ -34,6 +36,7 @@ public class ResultFragment extends Fragment implements ResultContract.View {
     ResultListAdapter mAdapter;
     ArrayList<AnimeModel> mAnimes;
     ArrayList<Genre> mGenres;
+
     //these names are so simple because we use this variables only to disable buttons
     Button button1;
     Button button2;
@@ -49,6 +52,8 @@ public class ResultFragment extends Fragment implements ResultContract.View {
 
     @Override
     public void showAnimeList(ArrayList<AnimeModel> animes) {
+        this.mAnimes.clear();
+        mAdapter.notifyDataSetChanged();
         this.mAnimes.addAll(animes);
         Log.d(StaticVars.LOG_TAG, "onShowAnimeList, mAnimes size: " + mAnimes.size());
         Log.d(StaticVars.LOG_TAG, "adapter state: " + mAdapter);
@@ -57,7 +62,14 @@ public class ResultFragment extends Fragment implements ResultContract.View {
     }
 
     @Override
-    public void onLoadMoreClick() {
+    public void onLoadMoreClick(android.view.View view, int position) {
+        mPresenter.loadMoreAnimes();
+        view.setEnabled(false);
+        StaticVars.UNBLOCK_FOOTER = false;
+    }
+
+    @Override
+    public void onAnimeCardClick(android.view.View view, int position) {
 
     }
 
@@ -112,11 +124,11 @@ public class ResultFragment extends Fragment implements ResultContract.View {
         } else {
             mAnimes = savedInstanceState.getParcelableArrayList(StaticVars.ANIME_LIST);
         }*/
-        if (mAnimes == null){
-            mAnimes  =new ArrayList<>();
+        if (mAnimes == null) {
+            mAnimes = new ArrayList<>();
         }
-        Log.d(StaticVars.LOG_TAG,"anime list of view size: "  + mAnimes.size());
-        mAdapter = new ResultListAdapter(mAnimes,getContext());
+        Log.d(StaticVars.LOG_TAG, "anime list of view size: " + mAnimes.size());
+        mAdapter = new ResultListAdapter(mAnimes, getContext(),this);
         mRecyclerView = (RecyclerView) root.findViewById(R.id.animeRecycler);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -130,50 +142,54 @@ public class ResultFragment extends Fragment implements ResultContract.View {
     }
 
 
-    class ResultListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder > {
+    class ResultListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         ArrayList<AnimeModel> mAnimeModels;
         Context mCtx;
+        ResultContract.View mOnClickListener;
 
-        public ResultListAdapter(ArrayList<AnimeModel> mAnimeModels, Context ctx) {
+        public ResultListAdapter(ArrayList<AnimeModel> mAnimeModels, Context ctx, ResultContract.View mOnClickListener) {
             this.mCtx = ctx;
             this.mAnimeModels = mAnimeModels;
+            this.mOnClickListener = mOnClickListener;
         }
 
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            if (viewType == StaticVars.FOOTER_CODE){
-                return new ResultViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.footer, parent, false));
-            } else if (viewType == StaticVars.ITEM_CODE){
+            if (viewType == StaticVars.FOOTER_CODE) {
+                return new FooterViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.footer, parent, false));
+            } else
                 return new ResultViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.anime_card, parent, false));
-            } else return null;
 
         }
 
         @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder  holder, int position) {
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-            if (holder instanceof ResultViewHolder){
-                if (mAnimeModels.size()!=0 && position!= mAnimeModels.size()){
+            if (holder instanceof ResultViewHolder && holder != null) {
+                if (mAnimeModels.size() != 0 && position != mAnimeModels.size()) {
                     AnimeModel animeModel = mAnimeModels.get(position);
-                    ((ResultViewHolder)holder).type.setText(animeModel.getKind());
-                    ((ResultViewHolder)holder).animeName.setText(animeModel.getRussian());
-                    Log.d(StaticVars.LOG_TAG, animeModel + " onBindViewHolder");
-                    ((ResultViewHolder)holder).releaseDate.setText(animeModel.getAiredOn());
-                    Glide.with(mCtx).load(Uri.parse(StaticVars.BASE_SHIKIMORI_URL + animeModel.getImage().getOriginal())).into(((ResultViewHolder)holder).animeImage);
+                    ((ResultViewHolder) holder).type.setText(animeModel.getKind());
+                    ((ResultViewHolder) holder).animeName.setText(animeModel.getRussian());
+                    ((ResultViewHolder) holder).releaseDate.setText(animeModel.getAiredOn());
+                    Glide.with(mCtx).load(Uri.parse(StaticVars.BASE_SHIKIMORI_URL + animeModel.getImage().getOriginal())).into(((ResultViewHolder) holder).animeImage);
 
-                    Log.d(StaticVars.LOG_TAG,"length: " + mAnimeModels.size());
-                    Log.d(StaticVars.LOG_TAG,"position: " + position );
                 }
 
-            } else if (holder instanceof FooterViewHolder){
-
+            } else if (holder instanceof FooterViewHolder && holder != null) {
+                //will be implemented later
+                /*
+                if (StaticVars.UNBLOCK_FOOTER){
+                    ((FooterViewHolder) holder).footerButton.setEnabled(true);
+                } else {
+                    ((FooterViewHolder) holder).footerButton.setEnabled(false);
+                }*/
             }
         }
 
         @Override
         public int getItemViewType(int position) {
-            if (position == mAnimeModels.size()){
+            if (position == mAnimeModels.size() && mAnimeModels.size() != 0) {
                 return StaticVars.FOOTER_CODE;
             } else {
                 return StaticVars.ITEM_CODE;
@@ -182,10 +198,8 @@ public class ResultFragment extends Fragment implements ResultContract.View {
 
         @Override
         public int getItemCount() {
-            //return mAnimeModels.size();
-            //stub
-            Log.d(StaticVars.LOG_TAG,"adapter list size: " + mAnimeModels.size());
-            return mAnimeModels.size()+1;
+
+            return mAnimeModels.size() + 1;
         }
 
         public class ResultViewHolder extends RecyclerView.ViewHolder {
@@ -204,11 +218,26 @@ public class ResultFragment extends Fragment implements ResultContract.View {
             }
         }
 
-        public class FooterViewHolder extends RecyclerView.ViewHolder{
-            TextView textViewFooter;
-            public FooterViewHolder(View itemView) {
+        public class FooterViewHolder extends RecyclerView.ViewHolder {
+            Button footerButton;
+
+            public FooterViewHolder(final View itemView) {
                 super(itemView);
-                textViewFooter  = (TextView)itemView.findViewById(R.id.footerText);
+                footerButton = (Button) itemView.findViewById(R.id.footerText);
+                itemView.findViewById(R.id.footerCard).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mOnClickListener.onLoadMoreClick(itemView,getAdapterPosition());
+                        Log.d(StaticVars.LOG_TAG,"footer clicked");
+                    }
+                });
+                footerButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(StaticVars.LOG_TAG,"footer clicked");
+                        mOnClickListener.onLoadMoreClick(itemView,getAdapterPosition());
+                    }
+                });
             }
         }
 

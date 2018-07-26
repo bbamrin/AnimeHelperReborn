@@ -92,6 +92,7 @@ public class Utils {
             list.add(Space);
             Genre Historical = new Genre();
             Historical.setTextGenre("Исторический");
+            Historical.setShikimoriNumber("13");
             list.add(Historical);
             Genre Fantasy = new Genre();
             Fantasy.setTextGenre("Фэнтези");

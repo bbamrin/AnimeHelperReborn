@@ -21,12 +21,12 @@ public class ResultViewPresenter implements ResultContract.Presenter {
         this.mView = mView;
         mRepository = AnimeRepository.getInstance();
         mRepository.setPresenter(this);
-        if (mRepository.getAnimeList() == null){
+        if (mRepository.getAnimeList(mView.getGenres()) == null){
             mRepository.downloadNewAnimes(mView.getGenres(),"1","50");
             Log.d(StaticVars.LOG_TAG," mRepository animeList is null");
         } else {
             Log.d(StaticVars.LOG_TAG," mRepository animeList is not null");
-            mView.showAnimeList(mRepository.getAnimeList());
+            mView.showAnimeList(mRepository.getAnimeList(mView.getGenres()));
         }
 
     }
@@ -39,8 +39,13 @@ public class ResultViewPresenter implements ResultContract.Presenter {
     }
 
     @Override
+    public void loadMoreAnimes() {
+        mRepository.downloadNewAnimes(mView.getGenres(),(mRepository.getLastPage(mView.getGenres())+1)+"","50");
+    }
+
+    @Override
     public void notifyAnimesReceived(ArrayList<AnimeModel> animeModels) {
-        mView.showAnimeList(mRepository.getAnimeList());
+        mView.showAnimeList(mRepository.getAnimeList(mView.getGenres()));
     }
 
 
