@@ -24,6 +24,7 @@ public interface ResultContract {
 
     public interface Presenter extends BasePresenter {
         void onGenresReceived(ArrayList<Genre> genres);
+        void nothingMore();
         void loadMoreAnimes();
         void notifyAnimesReceived(ArrayList<AnimeModel> animeModels);
 

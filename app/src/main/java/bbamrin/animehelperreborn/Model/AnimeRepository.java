@@ -1,6 +1,7 @@
 package bbamrin.animehelperreborn.Model;
 
 import android.app.Application;
+import android.net.ConnectivityManager;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -88,12 +89,19 @@ public class AnimeRepository extends AnimeRepositoryModel {
                         mAnimeMap.put(genres,Utils.addOnlyNewData(mAnimeMap.get(genres),animeModels));
                         mLastPagesMap.put(genres,Integer.parseInt(page));
                         if (mResultPresenter != null) {
-                            mResultPresenter.notifyAnimesReceived(mAnimeMap.get(genres));
+                            if (animeModels.size()==0){
+                                mResultPresenter.nothingMore();
+                            } else {
+                                mResultPresenter.notifyAnimesReceived(mAnimeMap.get(genres));
+                            }
+
                         }
                     }
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(StaticVars.LOG_TAG, "onError");
+                        Log.d(StaticVars.LOG_TAG, "onError: ");
+                        e.printStackTrace();
+
                     }
 
                     @Override

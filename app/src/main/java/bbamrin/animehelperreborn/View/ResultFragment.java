@@ -14,13 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 
 import bbamrin.animehelperreborn.Contracts.ResultContract;
 import bbamrin.animehelperreborn.Model.StaticVars;
@@ -28,6 +29,13 @@ import bbamrin.animehelperreborn.Model.internalModel.Genre;
 import bbamrin.animehelperreborn.Model.retrofitModel.AnimeModel;
 import bbamrin.animehelperreborn.Presenter.ResultViewPresenter;
 import bbamrin.animehelperreborn.R;
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
+import io.reactivex.CompletableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableCompletableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 public class ResultFragment extends Fragment implements ResultContract.View {
 
@@ -36,6 +44,7 @@ public class ResultFragment extends Fragment implements ResultContract.View {
     ResultListAdapter mAdapter;
     ArrayList<AnimeModel> mAnimes;
     ArrayList<Genre> mGenres;
+    Disposable disposable;
 
     //these names are so simple because we use this variables only to disable buttons
     Button button1;
@@ -62,10 +71,33 @@ public class ResultFragment extends Fragment implements ResultContract.View {
     }
 
     @Override
-    public void onLoadMoreClick(android.view.View view, int position) {
+    public void onLoadMoreClick(final android.view.View view, int position) {
         mPresenter.loadMoreAnimes();
         view.setEnabled(false);
         StaticVars.UNBLOCK_FOOTER = false;
+        Completable completable = Completable.create(new CompletableOnSubscribe() {
+            @Override
+            public void subscribe(CompletableEmitter emitter) throws Exception {
+                LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(1000));
+
+                emitter.onComplete();
+            }
+        });
+        disposable = completable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableCompletableObserver() {
+            @Override
+            public void onComplete() {
+                StaticVars.UNBLOCK_FOOTER = true;
+                if (mAdapter != null) {
+                    mAdapter.notifyItemChanged(mAnimes.size());
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Thread.currentThread().interrupt();
+            }
+        });
+
     }
 
     @Override
@@ -80,11 +112,12 @@ public class ResultFragment extends Fragment implements ResultContract.View {
 
     @Override
     public void showErrorNotification() {
-
+        Toast.makeText(getContext(),"there is no internet connection",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void showNothingMoreNotification() {
+
 
     }
 
@@ -105,6 +138,9 @@ public class ResultFragment extends Fragment implements ResultContract.View {
 
     @Override
     public void onDestroy() {
+        if (disposable!= null){
+            disposable.dispose();
+        }
         super.onDestroy();
     }
 
@@ -113,7 +149,7 @@ public class ResultFragment extends Fragment implements ResultContract.View {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.recycler_fragment_layout, container, false);
-
+        StaticVars.UNBLOCK_FOOTER = true;
         if (getArguments().getParcelableArrayList(StaticVars.GENRES_LIST) != null) {
             mGenres = getArguments().getParcelableArrayList(StaticVars.GENRES_LIST);
             Log.d(StaticVars.LOG_TAG, mGenres.toString());
@@ -128,7 +164,7 @@ public class ResultFragment extends Fragment implements ResultContract.View {
             mAnimes = new ArrayList<>();
         }
         Log.d(StaticVars.LOG_TAG, "anime list of view size: " + mAnimes.size());
-        mAdapter = new ResultListAdapter(mAnimes, getContext(),this);
+        mAdapter = new ResultListAdapter(mAnimes, getContext(), this);
         mRecyclerView = (RecyclerView) root.findViewById(R.id.animeRecycler);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -177,13 +213,11 @@ public class ResultFragment extends Fragment implements ResultContract.View {
                 }
 
             } else if (holder instanceof FooterViewHolder && holder != null) {
-                //will be implemented later
-                /*
-                if (StaticVars.UNBLOCK_FOOTER){
+                if (StaticVars.UNBLOCK_FOOTER) {
                     ((FooterViewHolder) holder).footerButton.setEnabled(true);
                 } else {
                     ((FooterViewHolder) holder).footerButton.setEnabled(false);
-                }*/
+                }
             }
         }
 
@@ -227,15 +261,15 @@ public class ResultFragment extends Fragment implements ResultContract.View {
                 itemView.findViewById(R.id.footerCard).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mOnClickListener.onLoadMoreClick(itemView,getAdapterPosition());
-                        Log.d(StaticVars.LOG_TAG,"footer clicked");
+                        mOnClickListener.onLoadMoreClick(itemView, getAdapterPosition());
+                        Log.d(StaticVars.LOG_TAG, "footer clicked");
                     }
                 });
                 footerButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d(StaticVars.LOG_TAG,"footer clicked");
-                        mOnClickListener.onLoadMoreClick(itemView,getAdapterPosition());
+                        Log.d(StaticVars.LOG_TAG, "footer clicked");
+                        mOnClickListener.onLoadMoreClick(itemView, getAdapterPosition());
                     }
                 });
             }

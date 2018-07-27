@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="5dp"
-            android:text="Footer View"
+            android:text="Load More!"
             android:textAllCaps="true"
             android:textColor="@android:color/white"
             android:textStyle="bold" />

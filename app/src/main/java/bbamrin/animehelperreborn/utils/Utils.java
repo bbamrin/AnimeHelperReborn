@@ -32,13 +32,16 @@ public class Utils {
 
     public static String generateGenresQueryForShikimori(ArrayList<Genre> genres){
         String query = "";
-        for(Genre g: genres){
-            query +=g.getShikimoriNumber();
-            query +=",";
-        }
-        StringBuilder builder = new StringBuilder(query);
-        builder.setCharAt(query.length()-1,' ');
-        return builder.toString();
+        if (genres.size()!=0){
+            for(Genre g: genres){
+                query +=g.getShikimoriNumber();
+                query +=",";
+            }
+            StringBuilder builder = new StringBuilder(query);
+            builder.setCharAt(query.length()-1,' ');
+            return builder.toString();
+        } else return query;
+
     }
 
     public static ArrayList<AnimeModel> addOnlyNewData(ArrayList<AnimeModel> arrayListOld, ArrayList<AnimeModel> arrayListNew){
