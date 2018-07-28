@@ -57,13 +57,6 @@ public class AnimeRepository extends AnimeRepositoryModel {
         super.onCreate();
         mAnimeMap = new HashMap<>();
         mLastPagesMap = new HashMap<>();
-        retrofit = new Retrofit
-                .Builder()
-                .baseUrl(StaticVars.BASE_SHIKIMORI_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build();
-        API = retrofit.create(ShikimoriAPI.class);
         singleton = this;
         Log.d(StaticVars.LOG_TAG, "application onCreate");
     }
@@ -75,6 +68,14 @@ public class AnimeRepository extends AnimeRepositoryModel {
         if (!mAnimeMap.containsKey(genres)){
             mAnimeMap.put(genres,new ArrayList<AnimeModel>());
         }
+
+        retrofit = new Retrofit
+                .Builder()
+                .baseUrl(StaticVars.BASE_SHIKIMORI_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build();
+        API = retrofit.create(ShikimoriAPI.class);
 
         Log.d(StaticVars.LOG_TAG, "getAnimeList");
         Log.d(StaticVars.LOG_TAG, Utils.generateGenresQueryForShikimori(genres));
