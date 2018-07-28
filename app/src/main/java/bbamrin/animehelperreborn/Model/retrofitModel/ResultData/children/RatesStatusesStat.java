@@ -1,4 +1,4 @@
-package bbamrin.animehelperreborn.Model.retrofitModel.children;
+package bbamrin.animehelperreborn.Model.retrofitModel.ResultData.children;
 
 import android.os.Parcel;
 import android.os.Parcelable;

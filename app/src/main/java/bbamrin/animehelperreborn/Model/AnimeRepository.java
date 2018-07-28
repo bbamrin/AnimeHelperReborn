@@ -1,7 +1,5 @@
 package bbamrin.animehelperreborn.Model;
 
-import android.app.Application;
-import android.net.ConnectivityManager;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -9,11 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-import bbamrin.animehelperreborn.BasePresenter;
 import bbamrin.animehelperreborn.Contracts.AnimeRepositoryModel;
 import bbamrin.animehelperreborn.Contracts.ResultContract;
 import bbamrin.animehelperreborn.Model.internalModel.Genre;
-import bbamrin.animehelperreborn.Model.retrofitModel.AnimeModel;
+import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.AnimeModel;
 import bbamrin.animehelperreborn.utils.Utils;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;

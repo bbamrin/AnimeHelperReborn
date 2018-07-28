@@ -4,6 +4,7 @@ public class StaticVars {
     public static String FRAGMENT_BACKSTACK = "backStack";
     public static int SUCCES_CODE = 1;
     public static int FAIL_CODE = -1;
+
     public static boolean UNBLOCK_FOOTER = false;
     public static int FOOTER_CODE = 0;
     public static int ITEM_CODE = 1;
@@ -21,4 +22,11 @@ public class StaticVars {
     public static String ANTOURAGE = "антураж и технологии";
     public static String STYLE_OF_NARRATIVE = "стиль повествования";
     public static String BASE_SHIKIMORI_URL = "https://shikimori.org/";
+
+    //view type codes for inner anime recycler
+    public static int HEADER_VIEW_TYPE = 0;
+    public static int DESCRIPTION_VIEW_TYPE = 1;
+    public static int RELATED_VIEW_TYPE = 2;
+    public static int SCREENSHOT_VIEW_TYPE = 3;
+
 }

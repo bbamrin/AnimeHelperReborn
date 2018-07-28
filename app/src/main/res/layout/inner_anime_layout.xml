@@ -12,4 +12,16 @@
 
     </android.support.v7.widget.RecyclerView>
 
+    <Button
+        android:id="@+id/addToFavoriteButton"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="add to favorites"/>
+
+    <Button
+        android:id="@+id/requestSimilarButton"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="request similar"/>
+
 </LinearLayout>

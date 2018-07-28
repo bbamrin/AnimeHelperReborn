@@ -12,7 +12,7 @@ import bbamrin.animehelperreborn.Contracts.ResultContract;
 import bbamrin.animehelperreborn.Model.AnimeRepository;
 import bbamrin.animehelperreborn.Model.StaticVars;
 import bbamrin.animehelperreborn.Model.internalModel.Genre;
-import bbamrin.animehelperreborn.Model.retrofitModel.AnimeModel;
+import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.AnimeModel;
 import bbamrin.animehelperreborn.View.ResultFragment;
 
 public class ResultViewPresenter implements ResultContract.Presenter {

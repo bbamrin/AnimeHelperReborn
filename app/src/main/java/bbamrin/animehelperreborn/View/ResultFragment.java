@@ -26,7 +26,7 @@ import java.util.concurrent.locks.LockSupport;
 import bbamrin.animehelperreborn.Contracts.ResultContract;
 import bbamrin.animehelperreborn.Model.StaticVars;
 import bbamrin.animehelperreborn.Model.internalModel.Genre;
-import bbamrin.animehelperreborn.Model.retrofitModel.AnimeModel;
+import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.AnimeModel;
 import bbamrin.animehelperreborn.Presenter.ResultViewPresenter;
 import bbamrin.animehelperreborn.R;
 import io.reactivex.Completable;

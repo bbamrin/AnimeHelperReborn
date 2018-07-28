@@ -1,13 +1,11 @@
 package bbamrin.animehelperreborn.utils;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 import bbamrin.animehelperreborn.Model.StaticVars;
 import bbamrin.animehelperreborn.Model.internalModel.Classification;
 import bbamrin.animehelperreborn.Model.internalModel.Genre;
-import bbamrin.animehelperreborn.Model.retrofitModel.AnimeModel;
+import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.AnimeModel;
 
 
 public class Utils {

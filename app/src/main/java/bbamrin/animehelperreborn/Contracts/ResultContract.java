@@ -1,14 +1,11 @@
 package bbamrin.animehelperreborn.Contracts;
 
-import android.view.View;
-
 import java.util.ArrayList;
 
 import bbamrin.animehelperreborn.BasePresenter;
 import bbamrin.animehelperreborn.BaseView;
-import bbamrin.animehelperreborn.Model.internalModel.Anime;
 import bbamrin.animehelperreborn.Model.internalModel.Genre;
-import bbamrin.animehelperreborn.Model.retrofitModel.AnimeModel;
+import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.AnimeModel;
 
 public interface ResultContract {
     public interface View extends BaseView<Presenter> {

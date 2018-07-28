@@ -3,14 +3,10 @@ package bbamrin.animehelperreborn.Contracts;
 import android.app.Application;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
-import bbamrin.animehelperreborn.BasePresenter;
-import bbamrin.animehelperreborn.Model.AnimeRepository;
 import bbamrin.animehelperreborn.Model.internalModel.Genre;
-import bbamrin.animehelperreborn.Model.retrofitModel.AnimeModel;
-import io.reactivex.Observable;
+import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.AnimeModel;
 
 public abstract class AnimeRepositoryModel extends Application {
     static AnimeRepositoryModel model;

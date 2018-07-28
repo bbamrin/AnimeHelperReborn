@@ -1,4 +1,4 @@
-package bbamrin.animehelperreborn.Model.retrofitModel;
+package bbamrin.animehelperreborn.Model.retrofitModel.ResultData;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import bbamrin.animehelperreborn.Model.retrofitModel.children.Genre;
-import bbamrin.animehelperreborn.Model.retrofitModel.children.Image;
-import bbamrin.animehelperreborn.Model.retrofitModel.children.RatesScoresStat;
-import bbamrin.animehelperreborn.Model.retrofitModel.children.RatesStatusesStat;
-import bbamrin.animehelperreborn.Model.retrofitModel.children.Studio;
+import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.children.Genre;
+import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.children.Image;
+import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.children.RatesScoresStat;
+import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.children.RatesStatusesStat;
+import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.children.Studio;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
