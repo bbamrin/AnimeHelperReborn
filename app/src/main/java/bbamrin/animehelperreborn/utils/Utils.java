@@ -1,14 +1,31 @@
 package bbamrin.animehelperreborn.utils;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 import bbamrin.animehelperreborn.Model.StaticVars;
 import bbamrin.animehelperreborn.Model.internalModel.Classification;
 import bbamrin.animehelperreborn.Model.internalModel.Genre;
+import bbamrin.animehelperreborn.Model.retrofitModel.InnerAnimeData.Related;
 import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.AnimeModel;
 
 
 public class Utils {
+
+
+    public static ArrayList<Related> addOnlyWithExistingAnime(ArrayList<Related> related) {
+        ArrayList<Related> newRelated = new ArrayList<>();
+        for (Related r : related) {
+            Log.d(StaticVars.LOG_TAG , "related------------------------------- : " + r.getAnime()==null?r.getManga().toString():r.getAnime().getName());
+            if (r.getAnime() != null) {
+                Log.d(StaticVars.LOG_TAG , "related anime: " + r.getAnime()==null?r.getManga().toString():r.getAnime().getName());
+                newRelated.add(r);
+            }
+        }
+        return newRelated;
+    }
+
     public static String generateChosenGenresString(ArrayList<Genre> genres) {
         String genresToReturn = "";
         if (genres != null) {
@@ -28,31 +45,31 @@ public class Utils {
 
     }
 
-    public static String generateGenresQueryForShikimori(ArrayList<Genre> genres){
+    public static String generateGenresQueryForShikimori(ArrayList<Genre> genres) {
         String query = "";
-        if (genres.size()!=0){
-            for(Genre g: genres){
-                query +=g.getShikimoriNumber();
-                query +=",";
+        if (genres.size() != 0) {
+            for (Genre g : genres) {
+                query += g.getShikimoriNumber();
+                query += ",";
             }
             StringBuilder builder = new StringBuilder(query);
-            builder.setCharAt(query.length()-1,' ');
+            builder.setCharAt(query.length() - 1, ' ');
             return builder.toString();
         } else return query;
 
     }
 
-    public static ArrayList<AnimeModel> addOnlyNewData(ArrayList<AnimeModel> arrayListOld, ArrayList<AnimeModel> arrayListNew){
+    public static ArrayList<AnimeModel> addOnlyNewData(ArrayList<AnimeModel> arrayListOld, ArrayList<AnimeModel> arrayListNew) {
         ArrayList<AnimeModel> list = new ArrayList<>();
         list.addAll(arrayListOld);
-        for (int i =0; i < arrayListNew.size();++i){
+        for (int i = 0; i < arrayListNew.size(); ++i) {
             int counter = 0;
-            for(int j = 0;j < arrayListOld.size();++j){
-                if (arrayListNew.get(i).equals(arrayListOld.get(j))){
+            for (int j = 0; j < arrayListOld.size(); ++j) {
+                if (arrayListNew.get(i).equals(arrayListOld.get(j))) {
                     counter++;
                 }
             }
-            if (counter ==0){
+            if (counter == 0) {
                 list.add(arrayListNew.get(i));
             }
         }
@@ -231,12 +248,12 @@ public class Utils {
         return list;
     }
 
-    public static ArrayList<Classification> getClassificationList(){
+    public static ArrayList<Classification> getClassificationList() {
         ArrayList<Classification> classifications = new ArrayList<>();
-        classifications.add(new Classification(StaticVars.ANTOURAGE,getGenresList(StaticVars.ANTOURAGE)));
-        classifications.add(new Classification(StaticVars.STYLE_OF_NARRATIVE,getGenresList(StaticVars.STYLE_OF_NARRATIVE)));
-        classifications.add(new Classification(StaticVars.SETTING,getGenresList(StaticVars.SETTING)));
-        classifications.add(new Classification(StaticVars.TARGET_AUDIENCE,getGenresList(StaticVars.TARGET_AUDIENCE)));
+        classifications.add(new Classification(StaticVars.ANTOURAGE, getGenresList(StaticVars.ANTOURAGE)));
+        classifications.add(new Classification(StaticVars.STYLE_OF_NARRATIVE, getGenresList(StaticVars.STYLE_OF_NARRATIVE)));
+        classifications.add(new Classification(StaticVars.SETTING, getGenresList(StaticVars.SETTING)));
+        classifications.add(new Classification(StaticVars.TARGET_AUDIENCE, getGenresList(StaticVars.TARGET_AUDIENCE)));
         return classifications;
     }
 

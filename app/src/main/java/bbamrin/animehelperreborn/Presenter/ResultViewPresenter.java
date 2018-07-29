@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.view.View;
 
 import java.util.ArrayList;
 
@@ -13,7 +14,10 @@ import bbamrin.animehelperreborn.Model.AnimeRepository;
 import bbamrin.animehelperreborn.Model.StaticVars;
 import bbamrin.animehelperreborn.Model.internalModel.Genre;
 import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.AnimeModel;
+import bbamrin.animehelperreborn.R;
+import bbamrin.animehelperreborn.View.InnerAnime.InnerAnimeFragment;
 import bbamrin.animehelperreborn.View.ResultFragment;
+import bbamrin.animehelperreborn.utils.FragmentUtils;
 
 public class ResultViewPresenter implements ResultContract.Presenter {
     private ResultContract.View mView;
@@ -23,7 +27,7 @@ public class ResultViewPresenter implements ResultContract.Presenter {
     public ResultViewPresenter(ResultContract.View mView) {
         this.mView = mView;
         mRepository = AnimeRepository.getInstance();
-        mRepository.setPresenter(this);
+        mRepository.setResultPresenter(this);
         ConnectivityManager cm =
                 (ConnectivityManager) ((ResultFragment) mView).getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -82,6 +86,14 @@ public class ResultViewPresenter implements ResultContract.Presenter {
             mView.showErrorNotification();
         }
 
+    }
+
+    @Override
+    public void onAnimeClick(View view, int position) {
+        AnimeModel animeModel =  mView.getAnimes().get(position);
+        Log.d(StaticVars.LOG_TAG,"anime description in resultPresenter: " + animeModel.getDescription());
+        InnerAnimeFragment fragment = InnerAnimeFragment.newInstance(animeModel,StaticVars.ANIME_MODEL);
+        FragmentUtils.replaceSupportFragment(((ResultFragment)mView).getFragmentManager(),fragment, R.id.mainActivityId);
     }
 
     @Override

@@ -8,9 +8,14 @@ import java.util.Map;
 
 
 import bbamrin.animehelperreborn.Contracts.AnimeRepositoryModel;
+import bbamrin.animehelperreborn.Contracts.InnerAnimeContract;
 import bbamrin.animehelperreborn.Contracts.ResultContract;
+import bbamrin.animehelperreborn.Model.internalModel.Anime;
 import bbamrin.animehelperreborn.Model.internalModel.Genre;
+import bbamrin.animehelperreborn.Model.retrofitModel.InnerAnimeData.AnimeScreenshot;
+import bbamrin.animehelperreborn.Model.retrofitModel.InnerAnimeData.Related;
 import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.AnimeModel;
+import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.children.Image;
 import bbamrin.animehelperreborn.utils.Utils;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -25,8 +30,12 @@ public class AnimeRepository extends AnimeRepositoryModel {
     private static AnimeRepository singleton;
     private Retrofit retrofit;
     private ShikimoriAPI API;
+    private InnerAnimeContract.Presenter mInnerAnimePresenter;
     private Map<ArrayList<Genre>,Integer> mLastPagesMap;
     private Disposable disposable;
+    private Map<AnimeModel,ArrayList<AnimeScreenshot>> animeToAnimeScreenshotsMatch;
+    private Map<AnimeModel,ArrayList<Related>> animeToRelatedMatch;
+    private Map<AnimeModel,AnimeModel> animeModelToFullAnimeModelMatching;
     private Map<ArrayList<Genre>,ArrayList<AnimeModel>> mAnimeMap;
     private ArrayList<AnimeModel> animeModelsList;
     private Observable<ArrayList<AnimeModel>> receivedAnimes;
@@ -37,8 +46,113 @@ public class AnimeRepository extends AnimeRepositoryModel {
     }
 
     @Override
-    public void setPresenter(ResultContract.Presenter o) {
+    public void setInnerAnimePresenter(InnerAnimeContract.Presenter t) {
+        mInnerAnimePresenter = t;
+    }
+
+    @Override
+    public void setResultPresenter(ResultContract.Presenter o) {
         this.mResultPresenter = (ResultContract.Presenter) o;
+    }
+
+    @Override
+    public void downloadAnime(final AnimeModel anime ) {
+        retrofit = new Retrofit
+                .Builder()
+                .baseUrl(StaticVars.BASE_SHIKIMORI_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build();
+        API = retrofit.create(ShikimoriAPI.class);
+        //will handle the  disposable later
+        API.getAnime(anime.getId().toString()).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<AnimeModel>() {
+                    @Override
+                    public void onNext(AnimeModel animeModel) {
+                        animeModelToFullAnimeModelMatching.put(anime,animeModel);
+                        if (mInnerAnimePresenter!=null){
+                            mInnerAnimePresenter.notifyAnimeDownloaded(animeModel);
+                            Log.d(StaticVars.LOG_TAG,"full anime downloaded, presenter is notified");
+                        }
+                        Log.d(StaticVars.LOG_TAG,"full anime downloaded");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    @Override
+    public void downloadImages(final AnimeModel anime) {
+        retrofit = new Retrofit
+                .Builder()
+                .baseUrl(StaticVars.BASE_SHIKIMORI_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build();
+        API = retrofit.create(ShikimoriAPI.class);
+        //will handle the  disposable later
+        API.getAnimeScreenshots(anime.getId().toString()).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<ArrayList<AnimeScreenshot>>() {
+            @Override
+            public void onNext(ArrayList<AnimeScreenshot> animeScreenshots) {
+                animeToAnimeScreenshotsMatch.put(anime,animeScreenshots);
+                if (mInnerAnimePresenter!=null){
+                    mInnerAnimePresenter.notifyImagesDownloaded(animeScreenshots);
+                }
+                Log.d(StaticVars.LOG_TAG,"screens downloaded");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+    }
+
+    @Override
+    public void downloadRelated(final AnimeModel anime) {
+        retrofit = new Retrofit
+                .Builder()
+                .baseUrl(StaticVars.BASE_SHIKIMORI_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build();
+        API = retrofit.create(ShikimoriAPI.class);
+        //will handle the  disposable later
+        API.getRelatedAnimes(anime.getId().toString()).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<ArrayList<Related>>() {
+            @Override
+            public void onNext(ArrayList<Related> relateds) {
+                animeToRelatedMatch.put(anime,relateds);
+                if (mInnerAnimePresenter!=null){
+                    mInnerAnimePresenter.notifyRelatedDownloaded(relateds);
+                }
+                Log.d(StaticVars.LOG_TAG,"related downloaded");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
     }
 
     ResultContract.Presenter mResultPresenter;
@@ -54,6 +168,9 @@ public class AnimeRepository extends AnimeRepositoryModel {
         super.onCreate();
         mAnimeMap = new HashMap<>();
         mLastPagesMap = new HashMap<>();
+        animeToAnimeScreenshotsMatch = new HashMap<>();
+        animeToRelatedMatch = new HashMap<>();
+        animeModelToFullAnimeModelMatching= new HashMap<>();
         singleton = this;
         Log.d(StaticVars.LOG_TAG, "application onCreate");
     }
@@ -112,6 +229,21 @@ public class AnimeRepository extends AnimeRepositoryModel {
     @Override
     public ArrayList<AnimeModel> getAnimeList(ArrayList<Genre> genres) {
         return mAnimeMap.get(genres);
+    }
+
+    @Override
+    public AnimeModel getFullAnime(AnimeModel animeModel) {
+        return animeModelToFullAnimeModelMatching.get(animeModel);
+    }
+
+    @Override
+    public ArrayList<AnimeScreenshot> getScreenshots(AnimeModel animeModel) {
+        return animeToAnimeScreenshotsMatch.get(animeModel);
+    }
+
+    @Override
+    public ArrayList<Related> getRelatedList(AnimeModel animeModel) {
+        return animeToRelatedMatch.get(animeModel);
     }
 
 

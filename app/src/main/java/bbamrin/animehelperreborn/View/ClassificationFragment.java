@@ -203,7 +203,7 @@ public class ClassificationFragment extends Fragment implements ClassificationVi
 
             public ClassificationViewHolder(final View itemView) {
                 super(itemView);
-                itemView.findViewById(R.id.classificationCardId).setOnClickListener(new View.OnClickListener() {
+                itemView.findViewById(R.id.animeCardId).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mOnClickListener.onClassificationClick(getAdapterPosition(), itemView);

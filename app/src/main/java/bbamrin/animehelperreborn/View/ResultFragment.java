@@ -102,7 +102,7 @@ public class ResultFragment extends Fragment implements ResultContract.View {
 
     @Override
     public void onAnimeCardClick(android.view.View view, int position) {
-
+        mPresenter.onAnimeClick(view,position);
     }
 
     @Override
@@ -154,12 +154,7 @@ public class ResultFragment extends Fragment implements ResultContract.View {
             mGenres = getArguments().getParcelableArrayList(StaticVars.GENRES_LIST);
             Log.d(StaticVars.LOG_TAG, mGenres.toString());
         }
-        //temporary solution, it will work bad if screen turns, in future i want to save this list in savedInstanceState
-        /*if (savedInstanceState == null) {
-            mAnimes = new ArrayList<>();
-        } else {
-            mAnimes = savedInstanceState.getParcelableArrayList(StaticVars.ANIME_LIST);
-        }*/
+
         if (mAnimes == null) {
             mAnimes = new ArrayList<>();
         }
@@ -243,12 +238,18 @@ public class ResultFragment extends Fragment implements ResultContract.View {
             TextView releaseDate;
             ImageView animeImage;
 
-            public ResultViewHolder(View itemView) {
+            public ResultViewHolder(final View itemView) {
                 super(itemView);
                 animeImage = (ImageView) itemView.findViewById(R.id.animeImageId);
                 type = (TextView) itemView.findViewById(R.id.animeTypeId);
                 releaseDate = (TextView) itemView.findViewById(R.id.animeReleaseDateId);
                 animeName = (TextView) itemView.findViewById(R.id.animeNameId);
+                itemView.findViewById(R.id.animeCardId).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mOnClickListener.onAnimeCardClick(itemView,getAdapterPosition());
+                    }
+                });
             }
         }
 

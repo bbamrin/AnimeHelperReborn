@@ -8,6 +8,7 @@ public class StaticVars {
     public static boolean UNBLOCK_FOOTER = false;
     public static int FOOTER_CODE = 0;
     public static int ITEM_CODE = 1;
+    public static String ANIME_MODEL = "animeModel";
     public static String ANIME_LIST = "animeList";
     public static String CLASSIFICATION_FRAGMENT_TAG = "classificationTag";
     public static String GENRE_FRAGMENT_TAG = "genreTag";

@@ -23,6 +23,7 @@ public interface ResultContract {
         void onGenresReceived(ArrayList<Genre> genres);
         void nothingMore();
         void loadMoreAnimes();
+        void onAnimeClick(android.view.View view, int position);
         void notifyAnimesReceived(ArrayList<AnimeModel> animeModels);
 
     }
