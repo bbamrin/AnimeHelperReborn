@@ -21,6 +21,6 @@ public interface ShikimoriAPI {
     @GET("api/animes/{animeId}")
     public Observable<AnimeModel> getAnime(@Path("animeId") String id);
 
-    @GET("api/animes/{animeId}/related")
+    @GET("api/animes/{animeId}/screenshots")
     public Observable<ArrayList<AnimeScreenshot>> getAnimeScreenshots(@Path("animeId") String id);
 }

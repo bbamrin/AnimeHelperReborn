@@ -3,6 +3,7 @@ package bbamrin.animehelperreborn.utils;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import bbamrin.animehelperreborn.Model.StaticVars;
 import bbamrin.animehelperreborn.Model.internalModel.Classification;
@@ -16,8 +17,10 @@ public class Utils {
 
     public static ArrayList<Related> addOnlyWithExistingAnime(ArrayList<Related> related) {
         ArrayList<Related> newRelated = new ArrayList<>();
+        Log.d(StaticVars.LOG_TAG,"related in addOnlyWithExistingAnime size :  " + related.size()+"");
+
         for (Related r : related) {
-            Log.d(StaticVars.LOG_TAG , "related------------------------------- : " + r.getAnime()==null?r.getManga().toString():r.getAnime().getName());
+            //Log.d(StaticVars.LOG_TAG , "related------------------------------- : " + r.getAnime()==null?r.getManga().toString():r.getAnime().getName());
             if (r.getAnime() != null) {
                 Log.d(StaticVars.LOG_TAG , "related anime: " + r.getAnime()==null?r.getManga().toString():r.getAnime().getName());
                 newRelated.add(r);
@@ -44,6 +47,48 @@ public class Utils {
         return genresToReturn;
 
     }
+
+    public static String generateReceivedGenresStrig(List<bbamrin.animehelperreborn.Model.retrofitModel.ResultData.children.Genre> genres) {
+        String genresToReturn = "";
+        if (genres != null) {
+            for (bbamrin.animehelperreborn.Model.retrofitModel.ResultData.children.Genre g : genres) {
+                    genresToReturn += g.getRussian() + ", ";
+
+            }
+            if (genresToReturn != "") {
+                StringBuilder builder = new StringBuilder(genresToReturn);
+                builder.setCharAt(genresToReturn.length() - 2, '.');
+                genresToReturn = builder.toString();
+            }
+
+        }
+        return genresToReturn;
+
+    }
+
+
+
+    public static String generateStudiosString(List<bbamrin.animehelperreborn.Model.retrofitModel.ResultData.children.Genre> genres) {
+        String genresToReturn = "";
+        if (genres != null) {
+            for (bbamrin.animehelperreborn.Model.retrofitModel.ResultData.children.Genre g : genres) {
+                genresToReturn += g.getRussian() + ", ";
+
+            }
+            if (genresToReturn != "") {
+                StringBuilder builder = new StringBuilder(genresToReturn);
+                builder.setCharAt(genresToReturn.length() - 2, '.');
+                genresToReturn = builder.toString();
+            }
+
+        }
+        return genresToReturn;
+
+    }
+
+
+
+
 
     public static String generateGenresQueryForShikimori(ArrayList<Genre> genres) {
         String query = "";

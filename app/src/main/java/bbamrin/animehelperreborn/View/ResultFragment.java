@@ -117,8 +117,7 @@ public class ResultFragment extends Fragment implements ResultContract.View {
 
     @Override
     public void showNothingMoreNotification() {
-
-
+        Toast.makeText(getContext(),"больше аниме нет",Toast.LENGTH_SHORT).show();
     }
 
     @Override

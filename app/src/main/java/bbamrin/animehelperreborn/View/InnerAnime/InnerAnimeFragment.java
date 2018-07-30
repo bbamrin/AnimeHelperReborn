@@ -23,6 +23,7 @@ import bbamrin.animehelperreborn.Model.retrofitModel.InnerAnimeData.Related;
 import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.AnimeModel;
 import bbamrin.animehelperreborn.Presenter.InnerAnimePresenter;
 import bbamrin.animehelperreborn.R;
+import bbamrin.animehelperreborn.utils.Utils;
 
 public class InnerAnimeFragment extends Fragment implements InnerAnimeContract.View {
 
@@ -71,15 +72,13 @@ public class InnerAnimeFragment extends Fragment implements InnerAnimeContract.V
 
     @Override
     public void setScreenshots(ArrayList<AnimeScreenshot> screenshots) {
-        mScreenshots.clear();
-        mScreenshots.addAll(screenshots);
+        mAdapter.setmAnimeScreenshots(screenshots);
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void setRelated(ArrayList<Related> relatedList) {
-        mRelated.clear();
-        mRelated.addAll(relatedList);
+        mAdapter.setmRelatedAnimes(Utils.addOnlyWithExistingAnime(relatedList));
         mAdapter.notifyDataSetChanged();
     }
 

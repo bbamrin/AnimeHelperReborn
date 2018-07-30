@@ -103,16 +103,18 @@ public class AnimeRepository extends AnimeRepositoryModel {
                 .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<ArrayList<AnimeScreenshot>>() {
             @Override
             public void onNext(ArrayList<AnimeScreenshot> animeScreenshots) {
-                animeToAnimeScreenshotsMatch.put(anime,animeScreenshots);
-                if (mInnerAnimePresenter!=null){
-                    mInnerAnimePresenter.notifyImagesDownloaded(animeScreenshots);
+                if (animeToAnimeScreenshotsMatch.size()>0){
+                    animeToAnimeScreenshotsMatch.put(anime,animeScreenshots);
+                    if (mInnerAnimePresenter!=null){
+                        mInnerAnimePresenter.notifyImagesDownloaded(animeScreenshots);
+                    }
                 }
-                Log.d(StaticVars.LOG_TAG,"screens downloaded");
+
             }
 
             @Override
             public void onError(Throwable e) {
-
+                Log.d(StaticVars.LOG_TAG,"some troubles with screen downloading");
             }
 
             @Override
@@ -200,17 +202,21 @@ public class AnimeRepository extends AnimeRepositoryModel {
                 .subscribeWith(new DisposableObserver<ArrayList<AnimeModel>>() {
                     @Override
                     public void onNext(ArrayList<AnimeModel> animeModels) {
-                        Log.d(StaticVars.LOG_TAG,"network request ended");
-                        mAnimeMap.put(genres,Utils.addOnlyNewData(mAnimeMap.get(genres),animeModels));
-                        mLastPagesMap.put(genres,Integer.parseInt(page));
-                        if (mResultPresenter != null) {
-                            if (animeModels.size()==0){
-                                mResultPresenter.nothingMore();
-                            } else {
-                                mResultPresenter.notifyAnimesReceived(mAnimeMap.get(genres));
-                            }
+                        if (animeModels.size()!=0){
+                            mAnimeMap.put(genres,Utils.addOnlyNewData(mAnimeMap.get(genres),animeModels));
+                            mLastPagesMap.put(genres,Integer.parseInt(page));
+                            if (mResultPresenter != null) {
+                                if (animeModels.size()==0){
+                                    mResultPresenter.nothingMore();
+                                } else {
+                                    mResultPresenter.notifyAnimesReceived(mAnimeMap.get(genres));
+                                }
 
+                            }
+                        } else {
+                            mResultPresenter.nothingMore();
                         }
+
                     }
                     @Override
                     public void onError(Throwable e) {

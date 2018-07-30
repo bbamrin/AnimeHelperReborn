@@ -100,7 +100,6 @@ public class ResultViewPresenter implements ResultContract.Presenter {
     public void notifyAnimesReceived(ArrayList<AnimeModel> animeModels) {
         mView.showAnimeList(mRepository.getAnimeList(mView.getGenres()));
 
-
     }
 
 
