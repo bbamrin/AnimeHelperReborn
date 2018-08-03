@@ -72,6 +72,7 @@ public class InnerAnimeFragment extends Fragment implements InnerAnimeContract.V
 
     @Override
     public void setScreenshots(ArrayList<AnimeScreenshot> screenshots) {
+//        Log.d(StaticVars.LOG_TAG,"original+++++++++++++++++++++++++: "+ screenshots.get(0).getOriginal());
         mAdapter.setmAnimeScreenshots(screenshots);
         mAdapter.notifyDataSetChanged();
     }

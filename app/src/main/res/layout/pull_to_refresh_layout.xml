@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<android.support.v4.widget.SwipeRefreshLayout
     android:id="@+id/pullToRefreshRecyclerFragmentId"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -8,24 +14,21 @@
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:id="@+id/animeRecycler"
-        android:layout_weight="1"
+        android:id="@+id/animePullToRefreshRecycler"
         android:layout_height="match_parent">
 
     </android.support.v7.widget.RecyclerView>
-    <Button
-        android:id="@+id/clearAllButton"
+
+
+</android.support.v4.widget.SwipeRefreshLayout>
+
+    <ProgressBar
+        android:id="@+id/resultProgressBar"
+        android:visibility="invisible"
+        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_weight="4"
         android:layout_height="match_parent" />
-
-
-    <Button
-        android:id="@+id/clearOrSearchButton"
-        android:layout_width="match_parent"
-        android:layout_weight="4"
-        android:layout_height="match_parent" />
-
-
 
 </LinearLayout>
+
+

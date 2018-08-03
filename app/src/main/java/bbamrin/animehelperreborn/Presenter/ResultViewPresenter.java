@@ -32,27 +32,33 @@ public class ResultViewPresenter implements ResultContract.Presenter {
                 (ConnectivityManager) ((ResultFragment) mView).getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        mView.showDownloadAnimation();
+        mView.hideRecycler();
+        Log.d(StaticVars.LOG_TAG,"mView rLayout state" + ((ResultFragment)mView).getRefreshLayout());
         if (activeNetwork != null) {
             if (activeNetwork.isAvailable()) {
                 if (mRepository.getAnimeList(mView.getGenres()) == null) {
                     mRepository.downloadNewAnimes(mView.getGenres(), "1", "50");
-                    Log.d(StaticVars.LOG_TAG, " mRepository animeList is null");
+                    Log.d(StaticVars.LOG_TAG, "mRepository.getAnimeList(mView.getGenres()) == null)");
                 } else {
-                    Log.d(StaticVars.LOG_TAG, " mRepository animeList is not null");
+                    mView.stopDownloadAnimation();
                     mView.showAnimeList(mRepository.getAnimeList(mView.getGenres()));
+                    mView.showRecycler();
                 }
             } else {
                 if (mRepository.getAnimeList(mView.getGenres()) != null) {
                     mView.showAnimeList(mRepository.getAnimeList(mView.getGenres()) );
+                } else {
+                    //maybe later it will be expanded by passing the type of an error, but now it assuming that there is only a network connectivity error
+                    mView.showErrorNotification();
                 }
-                //maybe later it will be expanded by passing the type of an error, but now it assuming that there is only a network connectivity error
-                mView.showErrorNotification();
             }
         } else {
             if (mRepository.getAnimeList(mView.getGenres()) != null) {
                 mView.showAnimeList(mRepository.getAnimeList(mView.getGenres()) );
+            } else {
+                mView.showErrorNotification();
             }
-            mView.showErrorNotification();
         }
 
 
@@ -72,9 +78,9 @@ public class ResultViewPresenter implements ResultContract.Presenter {
 
     @Override
     public void loadMoreAnimes() {
+
         ConnectivityManager cm =
                 (ConnectivityManager) ((ResultFragment) mView).getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         if (activeNetwork != null) {
             if (activeNetwork.isAvailable()) {
@@ -89,6 +95,11 @@ public class ResultViewPresenter implements ResultContract.Presenter {
     }
 
     @Override
+    public void onViewRefresh() {
+        loadMoreAnimes();
+    }
+
+    @Override
     public void onAnimeClick(View view, int position) {
         AnimeModel animeModel =  mView.getAnimes().get(position);
         Log.d(StaticVars.LOG_TAG,"anime description in resultPresenter: " + animeModel.getDescription());
@@ -99,7 +110,9 @@ public class ResultViewPresenter implements ResultContract.Presenter {
     @Override
     public void notifyAnimesReceived(ArrayList<AnimeModel> animeModels) {
         mView.showAnimeList(mRepository.getAnimeList(mView.getGenres()));
-
+        mView.stopRefreshingAnimation();
+        mView.showRecycler();
+        Log.d(StaticVars.LOG_TAG," notifyAnimesReceived");
     }
 
 

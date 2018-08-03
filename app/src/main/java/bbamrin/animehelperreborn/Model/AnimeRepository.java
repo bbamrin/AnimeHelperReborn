@@ -103,9 +103,11 @@ public class AnimeRepository extends AnimeRepositoryModel {
                 .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<ArrayList<AnimeScreenshot>>() {
             @Override
             public void onNext(ArrayList<AnimeScreenshot> animeScreenshots) {
-                if (animeToAnimeScreenshotsMatch.size()>0){
+                Log.d(StaticVars.LOG_TAG,"screens size: " + animeScreenshots.size());
+                if (animeToAnimeScreenshotsMatch.size()>=0){
                     animeToAnimeScreenshotsMatch.put(anime,animeScreenshots);
                     if (mInnerAnimePresenter!=null){
+                        Log.d(StaticVars.LOG_TAG,"presenter not null");
                         mInnerAnimePresenter.notifyImagesDownloaded(animeScreenshots);
                     }
                 }
@@ -140,6 +142,7 @@ public class AnimeRepository extends AnimeRepositoryModel {
             public void onNext(ArrayList<Related> relateds) {
                 animeToRelatedMatch.put(anime,relateds);
                 if (mInnerAnimePresenter!=null){
+                    Log.d(StaticVars.LOG_TAG,"presenter not null rel");
                     mInnerAnimePresenter.notifyRelatedDownloaded(relateds);
                 }
                 Log.d(StaticVars.LOG_TAG,"related downloaded");

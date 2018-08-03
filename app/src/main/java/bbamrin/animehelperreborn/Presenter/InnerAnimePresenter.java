@@ -64,6 +64,7 @@ public class InnerAnimePresenter implements InnerAnimeContract.Presenter {
 
     @Override
     public void notifyImagesDownloaded(ArrayList<AnimeScreenshot> screens) {
+        Log.d(StaticVars.LOG_TAG,"screens in presenter");
         mView.setScreenshots(screens);
     }
 

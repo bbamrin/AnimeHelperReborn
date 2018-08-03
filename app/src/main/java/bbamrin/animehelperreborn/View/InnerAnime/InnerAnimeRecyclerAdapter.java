@@ -56,7 +56,8 @@ public class InnerAnimeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
     public void setmAnimeScreenshots(ArrayList<AnimeScreenshot> mAnimeScreenshots) {
         this.mAnimeScreenshots.clear();
         this.mAnimeScreenshots.addAll(mAnimeScreenshots);
-        if (itemCount < 4 && mAnimeScreenshots.size() > 0) {
+
+        if (itemCount < 4 && this.mAnimeScreenshots.size() > 0) {
             itemCount += 1;
         }
     }
@@ -110,13 +111,11 @@ public class InnerAnimeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
         } else if (position == 1) {
             return StaticVars.DESCRIPTION_VIEW_TYPE;
         } else if (position == 2) {
-            if (mRelatedAnimes.size()==0){
+            if (mRelatedAnimes.size()==0 ){
                 return StaticVars.SCREENSHOT_VIEW_TYPE;
             } else return StaticVars.RELATED_VIEW_TYPE;
         } else if (position == 3){
-            if (mAnimeScreenshots.size()==0){
-                return StaticVars.RELATED_VIEW_TYPE;
-            } else return StaticVars.SCREENSHOT_VIEW_TYPE;
+            return StaticVars.SCREENSHOT_VIEW_TYPE;
         }
         return StaticVars.FAIL_CODE;
 

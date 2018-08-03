@@ -13,6 +13,11 @@ public interface ResultContract {
         void onLoadMoreClick(android.view.View view, int position);
         void onAnimeCardClick(android.view.View view,int position);
         void refreshList();
+        void showRecycler();
+        void hideRecycler();
+        void stopRefreshingAnimation();
+        void showDownloadAnimation();
+        void stopDownloadAnimation();
         void showErrorNotification();
         void showNothingMoreNotification();
         ArrayList<Genre> getGenres();
@@ -23,6 +28,7 @@ public interface ResultContract {
         void onGenresReceived(ArrayList<Genre> genres);
         void nothingMore();
         void loadMoreAnimes();
+        void onViewRefresh();
         void onAnimeClick(android.view.View view, int position);
         void notifyAnimesReceived(ArrayList<AnimeModel> animeModels);
 

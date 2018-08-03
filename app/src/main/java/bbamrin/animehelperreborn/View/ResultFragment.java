@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,10 +47,8 @@ public class ResultFragment extends Fragment implements ResultContract.View {
     ArrayList<AnimeModel> mAnimes;
     ArrayList<Genre> mGenres;
     Disposable disposable;
-
-    //these names are so simple because we use this variables only to disable buttons
-    Button button1;
-    Button button2;
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    ProgressBar mProgressBar;
 
     public static ResultFragment newInstance() {
 
@@ -67,7 +67,8 @@ public class ResultFragment extends Fragment implements ResultContract.View {
         Log.d(StaticVars.LOG_TAG, "onShowAnimeList, mAnimes size: " + mAnimes.size());
         Log.d(StaticVars.LOG_TAG, "adapter state: " + mAdapter);
         mAdapter.notifyDataSetChanged();
-
+        showRecycler();
+        stopDownloadAnimation();
     }
 
     @Override
@@ -111,6 +112,46 @@ public class ResultFragment extends Fragment implements ResultContract.View {
     }
 
     @Override
+    public void showRecycler() {
+        if (mRecyclerView!=null&&mSwipeRefreshLayout!=null){
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+        } else {
+            Log.d(StaticVars.LOG_TAG,"recycler state: " + mRecyclerView + ",\nrefreshLayout state  : " + mSwipeRefreshLayout);
+        }
+
+    }
+
+    @Override
+    public void hideRecycler() {
+        if (mRecyclerView!=null&&mSwipeRefreshLayout!=null){
+            mRecyclerView.setVisibility(View.GONE);
+            mSwipeRefreshLayout.setVisibility(View.GONE);
+        }
+
+    }
+
+
+    public SwipeRefreshLayout getRefreshLayout(){
+        return mSwipeRefreshLayout;
+    }
+
+    @Override
+    public void stopRefreshingAnimation() {
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void showDownloadAnimation() {
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void stopDownloadAnimation() {
+        mProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
     public void showErrorNotification() {
         Toast.makeText(getContext(),"there is no internet connection",Toast.LENGTH_SHORT).show();
     }
@@ -147,25 +188,28 @@ public class ResultFragment extends Fragment implements ResultContract.View {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.recycler_fragment_layout, container, false);
+        View root = inflater.inflate(R.layout.pull_to_refresh_layout, container, false);
         StaticVars.UNBLOCK_FOOTER = true;
         if (getArguments().getParcelableArrayList(StaticVars.GENRES_LIST) != null) {
             mGenres = getArguments().getParcelableArrayList(StaticVars.GENRES_LIST);
             Log.d(StaticVars.LOG_TAG, mGenres.toString());
         }
-
+        mProgressBar = (ProgressBar)root.findViewById(R.id.resultProgressBar);
         if (mAnimes == null) {
             mAnimes = new ArrayList<>();
         }
         Log.d(StaticVars.LOG_TAG, "anime list of view size: " + mAnimes.size());
         mAdapter = new ResultListAdapter(mAnimes, getContext(), this);
-        mRecyclerView = (RecyclerView) root.findViewById(R.id.animeRecycler);
+        mRecyclerView = (RecyclerView) root.findViewById(R.id.animePullToRefreshRecycler);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        button1 = (Button) root.findViewById(R.id.clearAllButton);
-        button2 = (Button) root.findViewById(R.id.clearOrSearchButton);
-        button1.setVisibility(View.GONE);
-        button2.setVisibility(View.GONE);
+        mSwipeRefreshLayout = (SwipeRefreshLayout)root.findViewById(R.id.pullToRefreshRecyclerFragmentId);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mPresenter.onViewRefresh();
+            }
+        });
         mPresenter = new ResultViewPresenter(this);
 
         return root;
