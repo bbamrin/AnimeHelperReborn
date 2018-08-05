@@ -22,7 +22,7 @@ public interface InnerAnimeContract  {
         public void notifyAnimeDownloaded(AnimeModel animeModel);
         public void notifyImagesDownloaded(ArrayList<AnimeScreenshot> screens);
         public void notifyRelatedDownloaded(ArrayList<Related> related);
-
+        public void onRelatedItemClick(AnimeModel animeModel);
     }
 
 }

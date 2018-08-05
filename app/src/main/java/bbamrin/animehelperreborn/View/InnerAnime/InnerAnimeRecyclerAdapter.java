@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +15,12 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
+import bbamrin.animehelperreborn.Contracts.InnerAnimeContract;
 import bbamrin.animehelperreborn.Model.StaticVars;
 import bbamrin.animehelperreborn.Model.retrofitModel.InnerAnimeData.AnimeScreenshot;
 import bbamrin.animehelperreborn.Model.retrofitModel.InnerAnimeData.Related;
 import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.AnimeModel;
+import bbamrin.animehelperreborn.Presenter.InnerAnimePresenter;
 import bbamrin.animehelperreborn.R;
 import bbamrin.animehelperreborn.utils.Utils;
 
@@ -33,6 +34,17 @@ public class InnerAnimeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
     private ArrayList<Related> mRelatedAnimes;
     private ArrayList<AnimeScreenshot> mAnimeScreenshots;
     private Context mCtx;
+    private InnerAnimePresenter mPresenter;
+
+    public void setmPresenter(InnerAnimePresenter presenter){
+        this.mPresenter = presenter;
+
+    }
+
+
+
+
+
     public InnerAnimeRecyclerAdapter(AnimeModel mAnimeModel, ArrayList<Related> mRelatedAnimes, ArrayList<AnimeScreenshot> mAnimeScreenshots, Context mCtx) {
         this.mAnimeModel = mAnimeModel;
         this.mRelatedAnimes = addOnlyWithExistingAnime(mRelatedAnimes);
@@ -83,17 +95,22 @@ public class InnerAnimeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 
         if (holder != null) {
             if (holder instanceof HeaderViewHolder) {
-                ((HeaderViewHolder) holder).headerAnimeName.setText(mAnimeModel.getName());
-                Glide.with(mCtx).load(Uri.parse(StaticVars.BASE_SHIKIMORI_URL + mAnimeModel.getImage().getOriginal())).into(((HeaderViewHolder) holder).headerImage);
-                ((HeaderViewHolder) holder).innerGenres.setText(mAnimeModel.getGenres() == null ? "null" : Utils.generateReceivedGenresStrig(mAnimeModel.getGenres()) );
-                ((HeaderViewHolder) holder).innerStatus.setText(mAnimeModel.getReleasedOn() == null ? "null" : mAnimeModel.getReleasedOn());
-                ((HeaderViewHolder) holder).innerStudio.setText("here will be studios soon");
-                ((HeaderViewHolder) holder).innerTypeText.setText(mAnimeModel.getKind() == null ? "null" : mAnimeModel.getKind());
-            } else if (holder instanceof DescriptionViewHolder) {
-                ((DescriptionViewHolder) holder).innerAnimeDescriptionHeader.setText("Описание:");
+                if (mAnimeModel!=null){
+                    ((HeaderViewHolder) holder).headerAnimeName.setText(mAnimeModel.getName());
+                    Glide.with(mCtx).load(Uri.parse(StaticVars.BASE_SHIKIMORI_URL + mAnimeModel.getImage().getOriginal())).into(((HeaderViewHolder) holder).headerImage);
+                    ((HeaderViewHolder) holder).innerGenres.setText(mAnimeModel.getGenres() == null ? "null" : Utils.generateReceivedGenresStrig(mAnimeModel.getGenres()) );
+                    ((HeaderViewHolder) holder).innerStatus.setText(mAnimeModel.getReleasedOn() == null ? "null" : mAnimeModel.getReleasedOn());
+                    ((HeaderViewHolder) holder).innerStudio.setText("here will be studios soon");
+                    ((HeaderViewHolder) holder).innerTypeText.setText(mAnimeModel.getKind() == null ? "null" : mAnimeModel.getKind());
+                }
 
-                ((DescriptionViewHolder) holder).innerAnimeDescription.setText(mAnimeModel.getDescription());
+            } else if (holder instanceof DescriptionViewHolder) {
+                if(mAnimeModel!=null){
+                    ((DescriptionViewHolder) holder).innerAnimeDescriptionHeader.setText("Описание:");
+                    ((DescriptionViewHolder) holder).innerAnimeDescription.setText(mAnimeModel.getDescription());
+                }
             } else if (holder instanceof RelatedViewHolder) {
+                ((RelatedViewHolder) holder).setRelatedOnClickListener(mPresenter);
                 ((RelatedViewHolder) holder).refreshList();
 
             } else if (holder instanceof ScreenshotsViewHolder) {
@@ -155,25 +172,28 @@ public class InnerAnimeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 
     public class RelatedViewHolder extends RecyclerView.ViewHolder {
         private RecyclerView relatedRecycler;
-        private RelatedRecyclerAdapter mAdapter;
+        private RelatedRecyclerAdapter mRelatedAdapter;
         private ArrayList<Related> mRelatedVHRelatedList;
 
         public RelatedViewHolder(View itemView) {
             super(itemView);
             mRelatedVHRelatedList = new ArrayList<>();
-            this.mAdapter = new RelatedRecyclerAdapter(mRelatedAnimes);
+            mRelatedAdapter = new RelatedRecyclerAdapter(mRelatedAnimes,mPresenter);
             relatedRecycler = (RecyclerView) itemView.findViewById(R.id.innerAnimeRelatedRecycler);
             relatedRecycler.setLayoutManager(new LinearLayoutManager(mCtx, LinearLayoutManager.HORIZONTAL, false));
-            relatedRecycler.setAdapter(mAdapter);
+            relatedRecycler.setAdapter(mRelatedAdapter);
         }
 
         public void setRelatedVHRelatedList(ArrayList<Related> mRelatedVHRelatedList) {
             this.mRelatedVHRelatedList.clear();
             this.mRelatedVHRelatedList.addAll(mRelatedVHRelatedList);
         }
+        public void setRelatedOnClickListener(InnerAnimePresenter presenter){
+            mRelatedAdapter.setmOnClickListener(mPresenter);
+        }
 
         public void refreshList() {
-            this.mAdapter.notifyDataSetChanged();
+            mRelatedAdapter.notifyDataSetChanged();
         }
     }
 

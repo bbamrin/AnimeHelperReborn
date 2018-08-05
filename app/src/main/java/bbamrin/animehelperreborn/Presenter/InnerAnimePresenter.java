@@ -10,6 +10,10 @@ import bbamrin.animehelperreborn.Model.StaticVars;
 import bbamrin.animehelperreborn.Model.retrofitModel.InnerAnimeData.AnimeScreenshot;
 import bbamrin.animehelperreborn.Model.retrofitModel.InnerAnimeData.Related;
 import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.AnimeModel;
+import bbamrin.animehelperreborn.R;
+import bbamrin.animehelperreborn.View.InnerAnime.InnerAnimeFragment;
+import bbamrin.animehelperreborn.View.ResultFragment;
+import bbamrin.animehelperreborn.utils.FragmentUtils;
 
 public class InnerAnimePresenter implements InnerAnimeContract.Presenter {
     InnerAnimeContract.View mView;
@@ -19,7 +23,6 @@ public class InnerAnimePresenter implements InnerAnimeContract.Presenter {
     public InnerAnimePresenter(InnerAnimeContract.View mView) {
         this.mView = mView;
         mAnimeModel = mView.getAnimeModel();
-
         this.mRepository = AnimeRepository.getInstance();
         mRepository.setInnerAnimePresenter(this);
         if (mRepository.getFullAnime(mAnimeModel) == null){
@@ -41,6 +44,7 @@ public class InnerAnimePresenter implements InnerAnimeContract.Presenter {
         }
     }
 
+
     @Override
     public void start() {
 
@@ -55,6 +59,8 @@ public class InnerAnimePresenter implements InnerAnimeContract.Presenter {
     public void onDetachView() {
 
     }
+
+
 
     @Override
     public void notifyAnimeDownloaded(AnimeModel animeModel) {
@@ -71,5 +77,12 @@ public class InnerAnimePresenter implements InnerAnimeContract.Presenter {
     @Override
     public void notifyRelatedDownloaded(ArrayList<Related> related) {
         mView.setRelated(related);
+    }
+
+    @Override
+    public void onRelatedItemClick(AnimeModel animeModel) {
+        Log.d(StaticVars.LOG_TAG,"related anime model id state: " + animeModel.getId());
+        InnerAnimeFragment fragment = InnerAnimeFragment.newInstance(animeModel,StaticVars.ANIME_MODEL);
+        FragmentUtils.replaceSupportFragment(((InnerAnimeFragment)mView).getFragmentManager(),fragment, R.id.mainActivityId);
     }
 }

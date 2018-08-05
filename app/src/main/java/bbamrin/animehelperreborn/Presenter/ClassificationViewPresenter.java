@@ -1,6 +1,6 @@
 package bbamrin.animehelperreborn.Presenter;
 
-import android.content.Intent;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -9,7 +9,6 @@ import android.view.View;
 import java.util.ArrayList;
 
 import bbamrin.animehelperreborn.Contracts.ClassificationViewContract;
-import bbamrin.animehelperreborn.Contracts.ResultContract;
 import bbamrin.animehelperreborn.Model.StaticVars;
 import bbamrin.animehelperreborn.Model.internalModel.Classification;
 import bbamrin.animehelperreborn.Model.internalModel.Genre;
