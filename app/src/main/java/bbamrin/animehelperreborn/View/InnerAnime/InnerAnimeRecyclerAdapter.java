@@ -87,7 +87,7 @@ public class InnerAnimeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
                 Glide.with(mCtx).load(Uri.parse(StaticVars.BASE_SHIKIMORI_URL + mAnimeModel.getImage().getOriginal())).into(((HeaderViewHolder) holder).headerImage);
                 ((HeaderViewHolder) holder).innerGenres.setText(mAnimeModel.getGenres() == null ? "null" : Utils.generateReceivedGenresStrig(mAnimeModel.getGenres()) );
                 ((HeaderViewHolder) holder).innerStatus.setText(mAnimeModel.getReleasedOn() == null ? "null" : mAnimeModel.getReleasedOn());
-                ((HeaderViewHolder) holder).innerStudio.setText("here wil be studios soon");
+                ((HeaderViewHolder) holder).innerStudio.setText("here will be studios soon");
                 ((HeaderViewHolder) holder).innerTypeText.setText(mAnimeModel.getKind() == null ? "null" : mAnimeModel.getKind());
             } else if (holder instanceof DescriptionViewHolder) {
                 ((DescriptionViewHolder) holder).innerAnimeDescriptionHeader.setText("Описание:");

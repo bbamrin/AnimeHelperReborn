@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,13 +63,13 @@ public class ResultFragment extends Fragment implements ResultContract.View {
     @Override
     public void showAnimeList(ArrayList<AnimeModel> animes) {
         this.mAnimes.clear();
-        mAdapter.notifyDataSetChanged();
         this.mAnimes.addAll(animes);
+        this.mAdapter.setListSize(this.mAnimes.size());
         Log.d(StaticVars.LOG_TAG, "onShowAnimeList, mAnimes size: " + mAnimes.size());
         Log.d(StaticVars.LOG_TAG, "adapter state: " + mAdapter);
-        mAdapter.notifyDataSetChanged();
         showRecycler();
         stopDownloadAnimation();
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -113,9 +114,11 @@ public class ResultFragment extends Fragment implements ResultContract.View {
 
     @Override
     public void showRecycler() {
+
         if (mRecyclerView!=null&&mSwipeRefreshLayout!=null){
             mRecyclerView.setVisibility(View.VISIBLE);
             mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+            Log.d(StaticVars.LOG_TAG,"recycler state: " + mRecyclerView + ",\nrefreshLayout state  : " + mSwipeRefreshLayout);
         } else {
             Log.d(StaticVars.LOG_TAG,"recycler state: " + mRecyclerView + ",\nrefreshLayout state  : " + mSwipeRefreshLayout);
         }
@@ -219,12 +222,24 @@ public class ResultFragment extends Fragment implements ResultContract.View {
     class ResultListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         ArrayList<AnimeModel> mAnimeModels;
         Context mCtx;
+        int mListSize;
         ResultContract.View mOnClickListener;
 
         public ResultListAdapter(ArrayList<AnimeModel> mAnimeModels, Context ctx, ResultContract.View mOnClickListener) {
             this.mCtx = ctx;
             this.mAnimeModels = mAnimeModels;
             this.mOnClickListener = mOnClickListener;
+            mListSize = mAnimeModels.size();
+            /*if (this.mAnimeModels.size() == 0){
+                mListSize = 0;
+            } else {
+                Log.d(StaticVars.LOG_TAG,mAnimeModels.size() + " <- size of the mAnimeModels");
+                mListSize = mAnimeModels.size()+1;
+            }*/
+        }
+
+        public void setListSize(int size){
+            this.mListSize = size+1;
         }
 
         @NonNull
@@ -239,24 +254,30 @@ public class ResultFragment extends Fragment implements ResultContract.View {
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            Log.d(StaticVars.LOG_TAG,mAnimeModels.size() + "onBindViewHolder ResultListAdapter");
+            if (mAnimeModels.get(0)!=null){
+                Log.d(StaticVars.LOG_TAG,mAnimeModels.size() + " <- size of the mAnimeModels, " + mAnimeModels.size());
+                if (holder instanceof ResultViewHolder && holder != null) {
+                    if (mAnimeModels.size() != 0 && position != mAnimeModels.size()) {
+                        AnimeModel animeModel = mAnimeModels.get(position);
+                        ((ResultViewHolder) holder).type.setText(animeModel.getKind());
+                        ((ResultViewHolder) holder).animeName.setText(animeModel.getRussian());
+                        ((ResultViewHolder) holder).releaseDate.setText(animeModel.getAiredOn());
+                        Glide.with(mCtx).load(Uri.parse(StaticVars.BASE_SHIKIMORI_URL + animeModel.getImage().getOriginal())).into(((ResultViewHolder) holder).animeImage);
 
-            if (holder instanceof ResultViewHolder && holder != null) {
-                if (mAnimeModels.size() != 0 && position != mAnimeModels.size()) {
-                    AnimeModel animeModel = mAnimeModels.get(position);
-                    ((ResultViewHolder) holder).type.setText(animeModel.getKind());
-                    ((ResultViewHolder) holder).animeName.setText(animeModel.getRussian());
-                    ((ResultViewHolder) holder).releaseDate.setText(animeModel.getAiredOn());
-                    Glide.with(mCtx).load(Uri.parse(StaticVars.BASE_SHIKIMORI_URL + animeModel.getImage().getOriginal())).into(((ResultViewHolder) holder).animeImage);
+                    }
 
+                } else if (holder instanceof FooterViewHolder && holder != null) {
+                    if (StaticVars.UNBLOCK_FOOTER) {
+                        ((FooterViewHolder) holder).footerButton.setEnabled(true);
+                    } else {
+                        ((FooterViewHolder) holder).footerButton.setEnabled(false);
+                    }
                 }
-
-            } else if (holder instanceof FooterViewHolder && holder != null) {
-                if (StaticVars.UNBLOCK_FOOTER) {
-                    ((FooterViewHolder) holder).footerButton.setEnabled(true);
-                } else {
-                    ((FooterViewHolder) holder).footerButton.setEnabled(false);
-                }
+            } else {
+                ((ResultViewHolder)holder).animeLayout.setVisibility(View.GONE);
             }
+
         }
 
         @Override
@@ -271,7 +292,7 @@ public class ResultFragment extends Fragment implements ResultContract.View {
         @Override
         public int getItemCount() {
 
-            return mAnimeModels.size() + 1;
+            return mListSize;
         }
 
         public class ResultViewHolder extends RecyclerView.ViewHolder {
@@ -280,6 +301,7 @@ public class ResultFragment extends Fragment implements ResultContract.View {
             TextView type;
             TextView releaseDate;
             ImageView animeImage;
+            LinearLayout animeLayout;
 
             public ResultViewHolder(final View itemView) {
                 super(itemView);
@@ -287,6 +309,7 @@ public class ResultFragment extends Fragment implements ResultContract.View {
                 type = (TextView) itemView.findViewById(R.id.animeTypeId);
                 releaseDate = (TextView) itemView.findViewById(R.id.animeReleaseDateId);
                 animeName = (TextView) itemView.findViewById(R.id.animeNameId);
+                animeLayout = (LinearLayout)itemView.findViewById(R.id.animeCardLinearLayout);
                 itemView.findViewById(R.id.animeCardId).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

@@ -271,7 +271,9 @@ public class AnimeRepository extends AnimeRepositoryModel {
 
     @Override
     public int getLastPage(ArrayList<Genre> genres) {
-        return mLastPagesMap.get(genres);
+        if (mLastPagesMap.get(genres)!=null){
+            return mLastPagesMap.get(genres);
+        } return 1;
     }
 
 

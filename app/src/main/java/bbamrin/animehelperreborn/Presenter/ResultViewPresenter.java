@@ -49,6 +49,8 @@ public class ResultViewPresenter implements ResultContract.Presenter {
                 if (mRepository.getAnimeList(mView.getGenres()) != null) {
                     mView.showAnimeList(mRepository.getAnimeList(mView.getGenres()) );
                 } else {
+                    mView.showRecycler();
+                    mView.stopDownloadAnimation();
                     //maybe later it will be expanded by passing the type of an error, but now it assuming that there is only a network connectivity error
                     mView.showErrorNotification();
                 }
@@ -57,6 +59,8 @@ public class ResultViewPresenter implements ResultContract.Presenter {
             if (mRepository.getAnimeList(mView.getGenres()) != null) {
                 mView.showAnimeList(mRepository.getAnimeList(mView.getGenres()) );
             } else {
+                mView.showRecycler();
+                mView.stopDownloadAnimation();
                 mView.showErrorNotification();
             }
         }
@@ -96,15 +100,38 @@ public class ResultViewPresenter implements ResultContract.Presenter {
 
     @Override
     public void onViewRefresh() {
-        loadMoreAnimes();
+        ConnectivityManager cm =
+                (ConnectivityManager) ((ResultFragment) mView).getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork != null) {
+            if (activeNetwork.isAvailable()) {
+                if (mRepository.getAnimeList(mView.getGenres())!=null){
+                    mView.showAnimeList(mRepository.getAnimeList(mView.getGenres()));
+                    mView.stopRefreshingAnimation();
+                } else {
+                    mRepository.downloadNewAnimes(mView.getGenres(), (mRepository.getLastPage(mView.getGenres()))+ "", "50");
+                }
+
+            } else {
+                mView.stopRefreshingAnimation();
+                mView.showErrorNotification();
+            }
+        } else {
+            mView.stopRefreshingAnimation();
+            mView.showErrorNotification();
+        }
     }
 
     @Override
     public void onAnimeClick(View view, int position) {
-        AnimeModel animeModel =  mView.getAnimes().get(position);
-        Log.d(StaticVars.LOG_TAG,"anime description in resultPresenter: " + animeModel.getDescription());
-        InnerAnimeFragment fragment = InnerAnimeFragment.newInstance(animeModel,StaticVars.ANIME_MODEL);
-        FragmentUtils.replaceSupportFragment(((ResultFragment)mView).getFragmentManager(),fragment, R.id.mainActivityId);
+        if (mView.getAnimes().size()!=0){
+            AnimeModel animeModel =  mView.getAnimes().get(position);
+            Log.d(StaticVars.LOG_TAG,"anime description in resultPresenter: " + animeModel.getDescription());
+            InnerAnimeFragment fragment = InnerAnimeFragment.newInstance(animeModel,StaticVars.ANIME_MODEL);
+            FragmentUtils.replaceSupportFragment(((ResultFragment)mView).getFragmentManager(),fragment, R.id.mainActivityId);
+        }
+
+
     }
 
     @Override
