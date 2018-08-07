@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,8 +64,6 @@ public class ResultFragment extends Fragment implements ResultContract.View {
         this.mAnimes.clear();
         this.mAnimes.addAll(animes);
         this.mAdapter.setListSize(this.mAnimes.size());
-        Log.d(StaticVars.LOG_TAG, "onShowAnimeList, mAnimes size: " + mAnimes.size());
-        Log.d(StaticVars.LOG_TAG, "adapter state: " + mAdapter);
         showRecycler();
         stopDownloadAnimation();
         mAdapter.notifyDataSetChanged();
@@ -104,7 +101,7 @@ public class ResultFragment extends Fragment implements ResultContract.View {
 
     @Override
     public void onAnimeCardClick(android.view.View view, int position) {
-        mPresenter.onAnimeClick(view,position);
+        mPresenter.onAnimeClick(view, position);
     }
 
     @Override
@@ -115,19 +112,17 @@ public class ResultFragment extends Fragment implements ResultContract.View {
     @Override
     public void showRecycler() {
 
-        if (mRecyclerView!=null&&mSwipeRefreshLayout!=null){
+        if (mRecyclerView != null && mSwipeRefreshLayout != null) {
             mRecyclerView.setVisibility(View.VISIBLE);
             mSwipeRefreshLayout.setVisibility(View.VISIBLE);
-            Log.d(StaticVars.LOG_TAG,"recycler state: " + mRecyclerView + ",\nrefreshLayout state  : " + mSwipeRefreshLayout);
         } else {
-            Log.d(StaticVars.LOG_TAG,"recycler state: " + mRecyclerView + ",\nrefreshLayout state  : " + mSwipeRefreshLayout);
         }
 
     }
 
     @Override
     public void hideRecycler() {
-        if (mRecyclerView!=null&&mSwipeRefreshLayout!=null){
+        if (mRecyclerView != null && mSwipeRefreshLayout != null) {
             mRecyclerView.setVisibility(View.GONE);
             mSwipeRefreshLayout.setVisibility(View.GONE);
         }
@@ -135,7 +130,7 @@ public class ResultFragment extends Fragment implements ResultContract.View {
     }
 
 
-    public SwipeRefreshLayout getRefreshLayout(){
+    public SwipeRefreshLayout getRefreshLayout() {
         return mSwipeRefreshLayout;
     }
 
@@ -156,12 +151,12 @@ public class ResultFragment extends Fragment implements ResultContract.View {
 
     @Override
     public void showErrorNotification() {
-        Toast.makeText(getContext(),"there is no internet connection",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "there is no internet connection", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void showNothingMoreNotification() {
-        Toast.makeText(getContext(),"больше аниме нет",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "больше аниме нет", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -181,7 +176,7 @@ public class ResultFragment extends Fragment implements ResultContract.View {
 
     @Override
     public void onDestroy() {
-        if (disposable!= null){
+        if (disposable != null) {
             disposable.dispose();
         }
         super.onDestroy();
@@ -195,18 +190,16 @@ public class ResultFragment extends Fragment implements ResultContract.View {
         StaticVars.UNBLOCK_FOOTER = true;
         if (getArguments().getParcelableArrayList(StaticVars.GENRES_LIST) != null) {
             mGenres = getArguments().getParcelableArrayList(StaticVars.GENRES_LIST);
-            Log.d(StaticVars.LOG_TAG, mGenres.toString());
         }
-        mProgressBar = (ProgressBar)root.findViewById(R.id.resultProgressBar);
+        mProgressBar = (ProgressBar) root.findViewById(R.id.resultProgressBar);
         if (mAnimes == null) {
             mAnimes = new ArrayList<>();
         }
-        Log.d(StaticVars.LOG_TAG, "anime list of view size: " + mAnimes.size());
         mAdapter = new ResultListAdapter(mAnimes, getContext(), this);
         mRecyclerView = (RecyclerView) root.findViewById(R.id.animePullToRefreshRecycler);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        mSwipeRefreshLayout = (SwipeRefreshLayout)root.findViewById(R.id.pullToRefreshRecyclerFragmentId);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.pullToRefreshRecyclerFragmentId);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -230,16 +223,10 @@ public class ResultFragment extends Fragment implements ResultContract.View {
             this.mAnimeModels = mAnimeModels;
             this.mOnClickListener = mOnClickListener;
             mListSize = mAnimeModels.size();
-            /*if (this.mAnimeModels.size() == 0){
-                mListSize = 0;
-            } else {
-                Log.d(StaticVars.LOG_TAG,mAnimeModels.size() + " <- size of the mAnimeModels");
-                mListSize = mAnimeModels.size()+1;
-            }*/
         }
 
-        public void setListSize(int size){
-            this.mListSize = size+1;
+        public void setListSize(int size) {
+            this.mListSize = size + 1;
         }
 
         @NonNull
@@ -254,9 +241,7 @@ public class ResultFragment extends Fragment implements ResultContract.View {
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            Log.d(StaticVars.LOG_TAG,mAnimeModels.size() + "onBindViewHolder ResultListAdapter");
-            if (mAnimeModels.get(0)!=null){
-                Log.d(StaticVars.LOG_TAG,mAnimeModels.size() + " <- size of the mAnimeModels, " + mAnimeModels.size());
+            if (mAnimeModels.get(0) != null) {
                 if (holder instanceof ResultViewHolder && holder != null) {
                     if (mAnimeModels.size() != 0 && position != mAnimeModels.size()) {
                         AnimeModel animeModel = mAnimeModels.get(position);
@@ -275,7 +260,7 @@ public class ResultFragment extends Fragment implements ResultContract.View {
                     }
                 }
             } else {
-                ((ResultViewHolder)holder).animeLayout.setVisibility(View.GONE);
+                ((ResultViewHolder) holder).animeLayout.setVisibility(View.GONE);
             }
 
         }
@@ -309,11 +294,11 @@ public class ResultFragment extends Fragment implements ResultContract.View {
                 type = (TextView) itemView.findViewById(R.id.animeTypeId);
                 releaseDate = (TextView) itemView.findViewById(R.id.animeReleaseDateId);
                 animeName = (TextView) itemView.findViewById(R.id.animeNameId);
-                animeLayout = (LinearLayout)itemView.findViewById(R.id.animeCardLinearLayout);
+                animeLayout = (LinearLayout) itemView.findViewById(R.id.animeCardLinearLayout);
                 itemView.findViewById(R.id.animeCardId).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mOnClickListener.onAnimeCardClick(itemView,getAdapterPosition());
+                        mOnClickListener.onAnimeCardClick(itemView, getAdapterPosition());
                     }
                 });
             }
@@ -329,13 +314,11 @@ public class ResultFragment extends Fragment implements ResultContract.View {
                     @Override
                     public void onClick(View v) {
                         mOnClickListener.onLoadMoreClick(itemView, getAdapterPosition());
-                        Log.d(StaticVars.LOG_TAG, "footer clicked");
                     }
                 });
                 footerButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d(StaticVars.LOG_TAG, "footer clicked");
                         mOnClickListener.onLoadMoreClick(itemView, getAdapterPosition());
                     }
                 });

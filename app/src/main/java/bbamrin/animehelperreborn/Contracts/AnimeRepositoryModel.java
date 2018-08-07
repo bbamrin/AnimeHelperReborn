@@ -29,7 +29,9 @@ public abstract class AnimeRepositoryModel extends Application {
     public abstract void downloadRelated(AnimeModel animeModel);
 
     public abstract ArrayList<Genre> getGenresList();
-    public abstract void stopObserving();
+    public abstract void stopObservingResults();
     public abstract int getLastPage(ArrayList<Genre> genres);
-    public abstract void onPresenterDestroy( );
+    public abstract void onResultPresenterDestroy( );
+    public abstract void onInnerAnimePresenterDestroy();
+
 }

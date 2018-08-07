@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import java.util.ArrayList;
 import bbamrin.animehelperreborn.Model.StaticVars;
 import bbamrin.animehelperreborn.Model.retrofitModel.InnerAnimeData.AnimeScreenshot;
 import bbamrin.animehelperreborn.R;
-import bbamrin.animehelperreborn.View.ResultFragment;
 
 public class ScreenshotsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public ScreenshotsRecyclerAdapter(ArrayList<AnimeScreenshot> mScreens, Context mCtx) {
@@ -37,7 +35,6 @@ public class ScreenshotsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof InnerScreenshotsViewHolder){
-            Log.d(StaticVars.LOG_TAG,"random screen in ScreenshotsRecyclerAdapter: " + mScreens.get(0));
             Glide.with(mCtx).load(Uri.parse(StaticVars.BASE_SHIKIMORI_URL + mScreens.get(position).getOriginal())).into(((InnerScreenshotsViewHolder) holder).animeScreen);
         }
     }

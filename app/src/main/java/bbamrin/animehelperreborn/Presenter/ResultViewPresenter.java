@@ -153,7 +153,7 @@ public class ResultViewPresenter implements ResultContract.Presenter {
         mRepository = null;
         mAnimeList = null;
         mView = null;
-        mRepository.onPresenterDestroy();
+        mRepository.onResultPresenterDestroy();
     }
 
     @Override

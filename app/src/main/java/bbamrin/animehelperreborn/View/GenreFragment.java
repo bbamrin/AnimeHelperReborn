@@ -53,7 +53,6 @@ public class GenreFragment extends Fragment implements GenreListContract.View {
     }
 
 
-
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);

@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,7 +118,6 @@ public class ClassificationFragment extends Fragment implements ClassificationVi
     @Override
     public void onClassificationClick(int position, View itemView) {
         mPresenter.editGenres(position, itemView);
-        Log.d(StaticVars.LOG_TAG, mPresenter + "");
         System.out.println("click");
     }
 

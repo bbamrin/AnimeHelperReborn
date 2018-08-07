@@ -65,12 +65,10 @@ public class InnerAnimePresenter implements InnerAnimeContract.Presenter {
     @Override
     public void notifyAnimeDownloaded(AnimeModel animeModel) {
         mView.setMainInfo(animeModel);
-        Log.d(StaticVars.LOG_TAG,"full anime in presenter");
     }
 
     @Override
     public void notifyImagesDownloaded(ArrayList<AnimeScreenshot> screens) {
-        Log.d(StaticVars.LOG_TAG,"screens in presenter");
         mView.setScreenshots(screens);
     }
 
@@ -81,7 +79,6 @@ public class InnerAnimePresenter implements InnerAnimeContract.Presenter {
 
     @Override
     public void onRelatedItemClick(AnimeModel animeModel) {
-        Log.d(StaticVars.LOG_TAG,"related anime model id state: " + animeModel.getId());
         InnerAnimeFragment fragment = InnerAnimeFragment.newInstance(animeModel,StaticVars.ANIME_MODEL);
         FragmentUtils.replaceSupportFragment(((InnerAnimeFragment)mView).getFragmentManager(),fragment, R.id.mainActivityId);
     }

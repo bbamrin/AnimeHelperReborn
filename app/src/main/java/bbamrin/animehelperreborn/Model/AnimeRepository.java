@@ -10,15 +10,14 @@ import java.util.Map;
 import bbamrin.animehelperreborn.Contracts.AnimeRepositoryModel;
 import bbamrin.animehelperreborn.Contracts.InnerAnimeContract;
 import bbamrin.animehelperreborn.Contracts.ResultContract;
-import bbamrin.animehelperreborn.Model.internalModel.Anime;
 import bbamrin.animehelperreborn.Model.internalModel.Genre;
 import bbamrin.animehelperreborn.Model.retrofitModel.InnerAnimeData.AnimeScreenshot;
 import bbamrin.animehelperreborn.Model.retrofitModel.InnerAnimeData.Related;
 import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.AnimeModel;
-import bbamrin.animehelperreborn.Model.retrofitModel.ResultData.children.Image;
 import bbamrin.animehelperreborn.utils.Utils;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -39,6 +38,7 @@ public class AnimeRepository extends AnimeRepositoryModel {
     private Map<ArrayList<Genre>,ArrayList<AnimeModel>> mAnimeMap;
     private ArrayList<AnimeModel> animeModelsList;
     private Observable<ArrayList<AnimeModel>> receivedAnimes;
+    private CompositeDisposable disposables;
 
 
     public static AnimeRepository getInstance() {
@@ -47,6 +47,7 @@ public class AnimeRepository extends AnimeRepositoryModel {
 
     @Override
     public void setInnerAnimePresenter(InnerAnimeContract.Presenter t) {
+        disposables.clear();
         mInnerAnimePresenter = t;
     }
 
@@ -65,7 +66,7 @@ public class AnimeRepository extends AnimeRepositoryModel {
                 .build();
         API = retrofit.create(ShikimoriAPI.class);
         //will handle the  disposable later
-        API.getAnime(anime.getId().toString()).subscribeOn(Schedulers.io())
+        disposables.add(API.getAnime(anime.getId().toString()).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<AnimeModel>() {
                     @Override
                     public void onNext(AnimeModel animeModel) {
@@ -86,7 +87,7 @@ public class AnimeRepository extends AnimeRepositoryModel {
                     public void onComplete() {
 
                     }
-                });
+                }));
     }
 
     @Override
@@ -99,7 +100,7 @@ public class AnimeRepository extends AnimeRepositoryModel {
                 .build();
         API = retrofit.create(ShikimoriAPI.class);
         //will handle the  disposable later
-        API.getAnimeScreenshots(anime.getId().toString()).subscribeOn(Schedulers.io())
+        disposables.add(API.getAnimeScreenshots(anime.getId().toString()).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<ArrayList<AnimeScreenshot>>() {
             @Override
             public void onNext(ArrayList<AnimeScreenshot> animeScreenshots) {
@@ -123,7 +124,7 @@ public class AnimeRepository extends AnimeRepositoryModel {
             public void onComplete() {
 
             }
-        });
+        }));
     }
 
     @Override
@@ -136,7 +137,7 @@ public class AnimeRepository extends AnimeRepositoryModel {
                 .build();
         API = retrofit.create(ShikimoriAPI.class);
         //will handle the  disposable later
-        API.getRelatedAnimes(anime.getId().toString()).subscribeOn(Schedulers.io())
+        disposables.add(API.getRelatedAnimes(anime.getId().toString()).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<ArrayList<Related>>() {
             @Override
             public void onNext(ArrayList<Related> relateds) {
@@ -157,7 +158,7 @@ public class AnimeRepository extends AnimeRepositoryModel {
             public void onComplete() {
 
             }
-        });
+        }));
     }
 
     ResultContract.Presenter mResultPresenter;
@@ -177,7 +178,7 @@ public class AnimeRepository extends AnimeRepositoryModel {
         animeToRelatedMatch = new HashMap<>();
         animeModelToFullAnimeModelMatching= new HashMap<>();
         singleton = this;
-        Log.d(StaticVars.LOG_TAG, "application onCreate");
+        disposables = new CompositeDisposable();
     }
 
 
@@ -263,7 +264,7 @@ public class AnimeRepository extends AnimeRepositoryModel {
     }
 
     @Override
-    public void stopObserving() {
+    public void stopObservingResults() {
         if (disposable != null) {
             disposable.dispose();
         }
@@ -278,9 +279,14 @@ public class AnimeRepository extends AnimeRepositoryModel {
 
 
     @Override
-    public void onPresenterDestroy() {
+    public void onResultPresenterDestroy() {
         this.mResultPresenter = null;
-        stopObserving();
+        stopObservingResults();
+    }
+
+    @Override
+    public void onInnerAnimePresenterDestroy() {
+        disposables.clear();
     }
 }
 
