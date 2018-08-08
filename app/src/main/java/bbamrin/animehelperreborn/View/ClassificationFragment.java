@@ -1,6 +1,8 @@
 package bbamrin.animehelperreborn.View;
 
 import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -88,9 +90,9 @@ public class ClassificationFragment extends Fragment implements ClassificationVi
         }
 
         if (savedInstanceState != null) {
-            adapter = new ClassificationRecyclerAdapter(savedInstanceState.<Classification>getParcelableArrayList(StaticVars.CLASSIFICATION_LIST), this);
+            adapter = new ClassificationRecyclerAdapter(savedInstanceState.<Classification>getParcelableArrayList(StaticVars.CLASSIFICATION_LIST), this,getContext());
         } else {
-            adapter = new ClassificationRecyclerAdapter(this.mClassificationArrayList, this);
+            adapter = new ClassificationRecyclerAdapter(this.mClassificationArrayList, this,getContext());
         }
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -166,6 +168,13 @@ public class ClassificationFragment extends Fragment implements ClassificationVi
     public static class ClassificationRecyclerAdapter extends RecyclerView.Adapter<ClassificationRecyclerAdapter.ClassificationViewHolder> {
         ArrayList<Classification> mClassificationsList;
         ClassificationViewContract.View mOnClickListener;
+        Context mCtx;
+
+        public ClassificationRecyclerAdapter(ArrayList<Classification> mClassificationsList, ClassificationViewContract.View mOnClickListener, Context mCtx) {
+            this.mClassificationsList = mClassificationsList;
+            this.mOnClickListener = mOnClickListener;
+            this.mCtx = mCtx;
+        }
 
         public ClassificationRecyclerAdapter(ArrayList<Classification> list, ClassificationViewContract.View onClickListener) {
             this.mOnClickListener = onClickListener;
@@ -186,6 +195,7 @@ public class ClassificationFragment extends Fragment implements ClassificationVi
             Classification classification = mClassificationsList.get(position);
             holder.classificationText.setText(classification.getClassificationName());
             holder.chosenGenresText.setText(classification.getChosenGenreText());
+            holder.classificationImage.setImageDrawable(mCtx.getResources().getDrawable(R.drawable.death_note));
             //image will be added later
         }
 

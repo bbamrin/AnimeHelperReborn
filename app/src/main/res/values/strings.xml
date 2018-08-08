@@ -2,7 +2,7 @@
     <string name="app_name">AnimeHelperReborn</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_title">Anime Helper</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
@@ -10,4 +10,7 @@
     <string name="find">find anime with chosen parametres</string>
     <string name="clear">clear selection</string>
     <string name="clearAll">clear all choices</string>
+    <string name="find_anime">Find Anime</string>
+    <string name="my_anime_list">My Anime List</string>
+    <string name="load_more">Load More!</string>
 </resources>

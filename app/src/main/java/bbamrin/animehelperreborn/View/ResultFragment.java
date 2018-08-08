@@ -233,7 +233,7 @@ public class ResultFragment extends Fragment implements ResultContract.View {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             if (viewType == StaticVars.FOOTER_CODE) {
-                return new FooterViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.footer, parent, false));
+                return new FooterViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.result_footer, parent, false));
             } else
                 return new ResultViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.anime_card, parent, false));
 

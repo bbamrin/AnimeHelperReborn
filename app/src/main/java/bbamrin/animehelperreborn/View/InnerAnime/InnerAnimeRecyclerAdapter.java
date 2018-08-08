@@ -91,11 +91,13 @@ public class InnerAnimeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
         if (holder != null) {
             if (holder instanceof HeaderViewHolder) {
                 if (mAnimeModel != null) {
-                    ((HeaderViewHolder) holder).headerAnimeName.setText(mAnimeModel.getName());
+                    ((HeaderViewHolder) holder).headerAnimeName.setText(mAnimeModel.getRussian());
                     Glide.with(mCtx).load(Uri.parse(StaticVars.BASE_SHIKIMORI_URL + mAnimeModel.getImage().getOriginal())).into(((HeaderViewHolder) holder).headerImage);
                     ((HeaderViewHolder) holder).innerGenres.setText(mAnimeModel.getGenres() == null ? "null" : Utils.generateReceivedGenresStrig(mAnimeModel.getGenres()));
                     ((HeaderViewHolder) holder).innerStatus.setText(mAnimeModel.getReleasedOn() == null ? "null" : mAnimeModel.getReleasedOn());
-                    ((HeaderViewHolder) holder).innerStudio.setText("here will be studios soon");
+                    //because this in development yet
+                    ((HeaderViewHolder) holder).innerStudio.setVisibility(View.GONE);
+                    //((HeaderViewHolder) holder).innerStudio.setText(mAnimeModel.getStudios().get(0).getName()  + " ");
                     ((HeaderViewHolder) holder).innerTypeText.setText(mAnimeModel.getKind() == null ? "null" : mAnimeModel.getKind());
                 }
 

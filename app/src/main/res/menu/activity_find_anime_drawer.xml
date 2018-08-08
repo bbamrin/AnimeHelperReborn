@@ -6,10 +6,10 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/findAnime"
-            android:title="Find Anime" />
+            android:title="@string/find_anime" />
         <item
             android:id="@+id/animeList"
-            android:title="My Anime List" />
+            android:title="@string/my_anime_list" />
     </group>
 
 
